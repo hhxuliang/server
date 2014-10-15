@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.way.chat.common.bean.AddNewFriendMsg;
 import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
 import com.way.chat.common.tran.bean.TranObject;
@@ -155,6 +156,44 @@ public class InputThread extends Thread {
 				refreshO.setObject(refreshList);
 				out.setMessage(refreshO);
 				break;
+			case ALLUSERS:
+				User loginUser1 = (User) read_tranObject.getObject();
+				ArrayList<User> list1 = dao.allUsers(loginUser1);
+				TranObject<ArrayList<User>> login2Object1 = new TranObject<ArrayList<User>>(
+						TranObjectType.ALLUSERS);
+				if (list1 != null) {
+					login2Object1.setObject(list1);// 把好友列表加入回复的对象中
+				} else {
+					login2Object1.setObject(null);
+				}
+				out.setMessage(login2Object1);// 同时把登录信息回复给用户
+
+				System.out.println(MyDate.getDateCN() + " 显示所有用户信息");
+				break;
+			case ADDFRIEND:
+				AddNewFriendMsg friends = (AddNewFriendMsg) read_tranObject.getObject();
+				TextMessage text = new TextMessage();
+				TranObject<TextMessage> infoText;
+				if( dao.addFriends(friends) )
+				{	
+					text.setMessage("添加新朋友成功,你马上可以和他聊天料哦!");		
+					infoText = new TranObject<TextMessage>(
+							TranObjectType.ISOK);
+					System.out.println(MyDate.getDateCN() + " 添加新朋友成功!");
+				}else
+				{
+					text.setMessage("添加新朋友失败,请联系管理员!");	
+					infoText = new TranObject<TextMessage>(
+							TranObjectType.ISERROR);
+					System.out.println(MyDate.getDateCN() + " 添加新朋友失败!");
+				}				
+				
+				infoText.setObject(text);
+				infoText.setFromUser(0);
+				out.setMessage(infoText);
+				
+				break;
+				
 			default:
 				break;
 			}

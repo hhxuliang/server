@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.way.chat.common.bean.AddNewFriendMsg;
 import com.way.chat.common.bean.User;
 import com.way.chat.common.util.Constants;
 import com.way.chat.common.util.DButil;
@@ -67,7 +68,56 @@ public class UserDaoImpl implements UserDao {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public ArrayList<User> allUsers(User u) {
+		Connection con = DButil.connect();
+		String sql = "select * from user where _id<>?";
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, u.getId());
+			ResultSet rs = ps.executeQuery();
+			if (rs.first()) {
+				ArrayList<User> list = new ArrayList<User>();
+				do {
+					User friend = new User();
+					friend.setId(rs.getInt("_id"));
+					friend.setName(rs.getString("_name"));
+					friend.setImg(rs.getInt("_img"));
+					list.add(friend);
+				} while (rs.next());
+				return list;
+			}
+		} catch (SQLException e) {
+			// e.printStackTrace();
+		} finally {
+			DButil.close(con);
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean addFriends(AddNewFriendMsg a)
+	{
+		Connection con = DButil.connect();
+		
+		try {
+			for(String s:a.getFriends())
+			{
+				String sql = "insert into _" + a.getUserID() + " (_name,_isOnline,_group,_qq,_img) values ('',0,0,"+s+",0) ";
+				System.out.println(sql);
+				PreparedStatement ps = con.prepareStatement(sql);
+				int res = ps.executeUpdate();
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DButil.close(con);
+		}
+		return false;
+	}
+	
 	/**
 	 * 查找自己
 	 */
@@ -103,11 +153,14 @@ public class UserDaoImpl implements UserDao {
 		User me = findMe(id);
 		list.add(me);// 先添加自己
 		Connection con = DButil.connect();
-		String sql = "select * from _? ";
+		//String sql = "select * from _? ";
+		String sql = "SELECT UP._id as _id,UP._group as _group,UP._qq as _qq,UP._img as _img,UP._isOnline as _isOnline,user._name as _name FROM UP,user where UP._qq=user._id ";
+		sql=sql.replaceAll("UP", "_"+id);
+		//System.out.println(sql);
 		PreparedStatement ps;
 		try {
 			ps = con.prepareStatement(sql);
-			ps.setInt(1, id);
+			//ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.first()) {
 				do {

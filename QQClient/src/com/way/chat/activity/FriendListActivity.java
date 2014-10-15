@@ -159,6 +159,21 @@ public class FriendListActivity extends MyActivity implements OnClickListener {
 			group.add(groupInfo);// 把自定义大组成员对象放入一个list中，传递给适配器
 		}
 	}
+	
+	/**
+	 * 增量添加好友数据，
+	 * 
+	 * @param list
+	 *            
+	 */
+	private void updateListViewData(List<User> list) {
+		for (int i = 0; i < groupName.length; ++i) {// 根据大组的数量，循环给各大组分配成员
+			for (User u : list) {
+				if (u.getGroup() == i)// 判断一下是属于哪个大组
+					group.get(i).add(u);
+			}
+		}
+	}
 
 	/**
 	 * 初始化动画
@@ -274,7 +289,8 @@ public class FriendListActivity extends MyActivity implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.friend_menu_add:
-			Toast.makeText(getApplicationContext(), "亲！此功能暂未实现哦", 0).show();
+			//Toast.makeText(getApplicationContext(), "亲！此功能暂未实现哦", 0).show();
+			goNewFriend();
 			break;
 		case R.id.friend_menu_exit:
 			exitDialog(FriendListActivity.this, "QQ提示", "亲！您真的要退出吗？");
@@ -304,6 +320,35 @@ public class FriendListActivity extends MyActivity implements OnClickListener {
 				}).setNegativeButton("取消", null).create().show();
 	}
 
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{ 
+		// requestCode用于区分业务  
+		// resultCode用于区分某种业务的执行情况  
+		if (1 == requestCode && RESULT_OK == resultCode) 
+		{ 
+			List<User> result = (List<User>) data.getSerializableExtra("newfriends"); 
+			userDB.addUser(list);
+			updateListViewData(result);
+			myExAdapter.notifyDataSetChanged();
+
+			//Toast.makeText(this.getBaseContext(), result, Toast.LENGTH_SHORT).show(); 
+		} 
+		else 
+		{ 
+//			Toast.makeText(this.getBaseContext(), "无返回值", Toast.LENGTH_SHORT).show(); 
+		} 
+	} 
+	/**
+	 * 进入登陆界面
+	 */
+	private void goNewFriend() {
+		Intent intent = new Intent();
+		intent.setClass(this, Newfriends.class);
+		startActivityForResult(intent,1);
+		//finish();
+	}
+	
 	@Override
 	public void getMessage(TranObject msg) {// 重写父类的方法，处理消息
 		// TODO Auto-generated method stub
@@ -458,7 +503,7 @@ public class FriendListActivity extends MyActivity implements OnClickListener {
 					Toast.makeText(FriendListActivity.this, "刷新成功", 0).show();
 				}
 
-			}.execute(null);
+			};
 		}
 	}
 }

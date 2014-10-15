@@ -21,7 +21,16 @@ public class User implements Serializable {
 	private int group;// 哪一个分组
 	private String ip;
 	private int port;
-
+	public User(){}
+	public User(int tid,String tname)
+	{
+		id=tid;
+		name = tname;
+		group=0;
+		img=0;
+		isOnline=1;
+		
+	}
 	public int getId() {
 		return id;
 	}

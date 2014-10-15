@@ -16,4 +16,9 @@ public enum TranObjectType {
 	UNCONNECTED, // 无法连接
 	FILE, // 传输文件
 	REFRESH, // 刷新
+	ADDFRIENDS,//添加好友成功
+	ALLUSERS,//所有用户信息
+	ADDFRIEND,//添加朋友
+	ISOK, // 成功
+	ISERROR, // 失败
 }

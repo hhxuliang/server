@@ -23,22 +23,33 @@ public class Client {
 	}
 
 	public boolean start() {
-		try {
-			client = new Socket();
-			// client.connect(new InetSocketAddress(Constants.SERVER_IP,
-			// Constants.SERVER_PORT), 3000);
-			client.connect(new InetSocketAddress(ip, port), 3000);
-			if (client.isConnected()) {
-				// System.out.println("Connected..");
-				clientThread = new ClientThread(client);
-				clientThread.start();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		new Thread(runnable).start();
+		try{
+			Thread.sleep(5000);
+		}catch(InterruptedException e)
+		{
+			System.out.println("Network connect runnable thread execute error!");
 			return false;
 		}
 		return true;
 	}
+	Runnable runnable = new Runnable(){
+		public void run(){
+			try {
+				client = new Socket();
+				// client.connect(new InetSocketAddress(Constants.SERVER_IP,
+				// Constants.SERVER_PORT), 3000);
+				client.connect(new InetSocketAddress(ip, port), 5000);
+				if (client.isConnected()) {
+					// System.out.println("Connected..");
+					clientThread = new ClientThread(client);
+					clientThread.start();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();				
+			}			
+		}
+	};
 
 	// 直接通过client得到读线程
 	public ClientInputThread getClientInputThread() {
