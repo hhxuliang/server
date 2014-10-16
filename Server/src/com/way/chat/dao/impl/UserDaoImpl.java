@@ -72,10 +72,11 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public ArrayList<User> allUsers(User u) {
 		Connection con = DButil.connect();
-		String sql = "select * from user where _id<>?";
+		String sql = "select * from user where _id<>? and _id not in (select _qq from _?)";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1, u.getId());
+			ps.setInt(2, u.getId());
 			ResultSet rs = ps.executeQuery();
 			if (rs.first()) {
 				ArrayList<User> list = new ArrayList<User>();
