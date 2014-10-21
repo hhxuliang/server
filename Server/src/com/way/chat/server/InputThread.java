@@ -155,6 +155,7 @@ public class InputThread extends Thread {
 						TranObjectType.REFRESH);
 				refreshO.setObject(refreshList);
 				out.setMessage(refreshO);
+				System.out.println(MyDate.getDateCN() + " Ë¢ÐÂÅóÓÑ×´Ì¬");
 				break;
 			case ALLUSERS:
 				User loginUser1 = (User) read_tranObject.getObject();

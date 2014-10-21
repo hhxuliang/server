@@ -13,6 +13,8 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int id;// QQ∫≈¬Î
+	private String loginAccount;
+	private String mobile_NO;
 	private String name;// Í«≥∆
 	private String email;// ” œ‰
 	private String password;// √‹¬Î
@@ -46,7 +48,13 @@ public class User implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getLoginAccount() {
+		return loginAccount;
+	}
 
+	public void setLoginAccount(String s) {
+		this.loginAccount = s;
+	}
 	public String getIp() {
 		return ip;
 	}

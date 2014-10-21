@@ -22,22 +22,45 @@ public class UserDaoImpl implements UserDao {
 		Connection con = DButil.connect();
 		String sql1 = "insert into user(_name,_password,_email,_time) values(?,?,?,?)";
 		String sql2 = "select _id from user";
+		String sql3 = "select * from  user where _email=?";
+		String sql4 = "select * from  user where _name=?";
+		
 
 		try {
-			PreparedStatement ps = con.prepareStatement(sql1);
-			ps.setString(1, u.getName());
-			ps.setString(2, u.getPassword());
-			ps.setString(3, u.getEmail());
-			ps.setString(4, MyDate.getDateCN());
-			int res = ps.executeUpdate();
-			if (res > 0) {
-				PreparedStatement ps2 = con.prepareStatement(sql2);
-				ResultSet rs = ps2.executeQuery();
-				if (rs.last()) {
-					id = rs.getInt("_id");
-					createFriendtable(id);// 注册成功后，创建一个已用户id为表名的表，用于存放好友信息
-					return id;
+			PreparedStatement ps3 = con.prepareStatement(sql3);
+			ps3.setString(1, u.getEmail());
+			ResultSet rs3 = ps3.executeQuery();
+			if (!rs3.last()) 
+			{
+				PreparedStatement ps4 = con.prepareStatement(sql4);
+				ps4.setString(1, u.getName());
+				ResultSet rs4 = ps4.executeQuery();
+				if (!rs4.last()) 
+				{
+					PreparedStatement ps = con.prepareStatement(sql1);
+					ps.setString(1, u.getName());
+					ps.setString(2, u.getPassword());
+					ps.setString(3, u.getEmail());
+					ps.setString(4, MyDate.getDateCN());
+					int res = ps.executeUpdate();
+					if (res > 0) {
+						PreparedStatement ps2 = con.prepareStatement(sql2);
+						ResultSet rs = ps2.executeQuery();
+						if (rs.last()) {
+							id = rs.getInt("_id");
+							createFriendtable(id);// 注册成功后，创建一个已用户id为表名的表，用于存放好友信息
+							return id;
+						}
+					}
 				}
+				else
+				{
+					return Constants.REGISTER_FAIL_NAME;
+				}
+			}
+			else
+			{
+				return Constants.REGISTER_FAIL_EMAIL;
 			}
 		} catch (SQLException e) {
 			 e.printStackTrace();
@@ -50,15 +73,17 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public ArrayList<User> login(User u) {
 		Connection con = DButil.connect();
-		String sql = "select * from user where _id=? and _password=?";
+		String sql = "select * from user where (_name=? or _email=?) and _password=?";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setInt(1, u.getId());
-			ps.setString(2, u.getPassword());
+			ps.setString(1, u.getLoginAccount());
+			ps.setString(2, u.getLoginAccount());
+			ps.setString(3, u.getPassword());
 			ResultSet rs = ps.executeQuery();
 			if (rs.first()) {
-				setOnline(u.getId());// 更新表状态为在线
-				ArrayList<User> refreshList = refresh(u.getId());
+				setOnline(rs.getInt("_id"));// 更新表状态为在线
+				ArrayList<User> refreshList = refresh(rs.getInt("_id"));
+				u.setId(rs.getInt("_id"));
 				return refreshList;
 			}
 		} catch (SQLException e) {
