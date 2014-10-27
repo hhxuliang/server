@@ -40,15 +40,6 @@ public class UploadFileServlet extends HttpServlet
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		upload.setSizeMax(4 * 1024 * 1024);
 
-		String name = getRandFileName("");
-		name = getWebappsPath() + "/" + IMAGE_PATH + "/" + name;
-
-		File temp = null;
-		temp = new File(name);
-		if (!temp.getParentFile().exists())
-		{
-			temp.getParentFile().mkdirs();
-		}
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter pw = response.getWriter();
 		try
@@ -58,23 +49,32 @@ public class UploadFileServlet extends HttpServlet
 			while (iter.hasNext())
 			{
 				FileItem item = (FileItem) iter.next();
-				if (!item.isFormField())
+				if (item.isFormField())
 				{
-					try
+					continue;
+				}
+				try
+				{
+					File fName = new File(getWebappsPath() + "/" + IMAGE_PATH + "/" + getRandFileName(""));
+					if (fName.getParentFile().exists() == false)
 					{
-						item.write(new File(name));
+						fName.getParentFile().mkdirs();
 					}
-					catch (Exception ex)
-					{
-						ex.printStackTrace();
-					}
+					item.write(fName);
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
 				}
 			}
-			pw.close();
 		}
-		catch (FileUploadException e)
+		catch (FileUploadException ex)
 		{
-			e.printStackTrace();
+			ex.printStackTrace();
+		}
+		finally
+		{
+			pw.close();
 		}
 	}
 

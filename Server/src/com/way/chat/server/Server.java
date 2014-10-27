@@ -40,7 +40,6 @@ public class Server extends Thread
 	@Override
 	public void run()
 	{
-		System.out.println(MyDate.getDateCN() + " 服务器已启动...");
 		try
 		{
 			while (isStarted)
