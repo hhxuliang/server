@@ -1,7 +1,6 @@
 package com.way.chat.common.tran.bean;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 传输的对象,直接通过Socket传输的最大对象
@@ -21,7 +20,7 @@ public class TranObject<T> implements Serializable
 	private int toUser;// 发往哪个用户
 
 	private T object;// 传输的对象，这个对象我们可以自定义任何
-	private List<Integer> group;// 群发给哪些用户
+	//private List<Integer> group;// 群发给哪些用户
 
 	public TranObject(TranObjectType type)
 	{

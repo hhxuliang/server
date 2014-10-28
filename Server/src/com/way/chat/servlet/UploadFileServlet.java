@@ -3,6 +3,8 @@ package com.way.chat.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +22,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class UploadFileServlet extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+	private static final Random random = new Random();
 
 	public static final String IMAGE_PATH = "images";
 
@@ -55,12 +59,17 @@ public class UploadFileServlet extends HttpServlet
 				}
 				try
 				{
-					File fName = new File(getWebappsPath() + "/" + IMAGE_PATH + "/" + getRandFileName(""));
-					if (fName.getParentFile().exists() == false)
+					String urlPath = request.getRequestURL().toString().replace("UploadFile", "");
+					String realPath = request.getServletContext().getRealPath("/");
+					String fileName = IMAGE_PATH + "/" + getRandFileName("");
+					File fileTemp = new File(realPath + "/" + fileName);
+					if (fileTemp.getParentFile().exists() == false)
 					{
-						fName.getParentFile().mkdirs();
+						fileTemp.getParentFile().mkdirs();
 					}
-					item.write(fName);
+					item.write(fileTemp);
+					pw.write(urlPath + fileName);
+					pw.write("\n");
 				}
 				catch (Exception ex)
 				{
@@ -84,23 +93,20 @@ public class UploadFileServlet extends HttpServlet
 		return rtn;
 	}
 
-	protected String getFileNameExtension(String fileName)
+	protected String getFileNameExtension(String extName)
 	{
-		String rtn = "jpg";
-		int pos = fileName.lastIndexOf('.');
+		String rtnVal = "jpg";
+		int pos = extName.lastIndexOf('.');
 		if (pos > 0)
 		{
-			rtn = fileName.substring(pos + 1);
+			rtnVal = extName.substring(pos + 1);
 		}
-		return rtn;
+		return rtnVal;
 	}
 
-	protected String getRandFileName(String fileName)
+	protected String getRandFileName(String extName)
 	{
-		String name = "";
-		Random rand = new Random(999);
-		int val = Math.abs(rand.nextInt()) % 1000;
-		name = "" + System.currentTimeMillis() + "_" + val + "." + getFileNameExtension(fileName);
-		return name;
+		String rtnVal = String.format("%s-%d.%s", sdf.format(new Date()), random.nextInt(999), getFileNameExtension(extName));
+		return rtnVal;
 	}
 }
