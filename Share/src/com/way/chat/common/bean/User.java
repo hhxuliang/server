@@ -3,7 +3,7 @@ package com.way.chat.common.bean;
 import java.io.Serializable;
 
 /**
- * 用户对象
+ * ????
  * 
  * @author way
  */
@@ -12,23 +12,24 @@ public class User implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id;// QQ号码
+	private int id;// QQ??
 	private String loginAccount;
-	//private String mobile_NO;
-	private String name;// 昵称
-	private String email;// 邮箱
-	private String password;// 密码
-	private int isOnline;// 是否在线
-	private int img;// 头像图标
-	private int group;// 哪一个分组
+	private String mobile_NO;
+	private String name;// ??
+	private String email;// ??
+	private String password;// ??
+	private int isOnline;// ????
+	private int img;// ????
+	private String group;// ?????
 	private String ip;
 	private int port;
+	private int iscrowd;
 	public User(){}
 	public User(int tid,String tname)
 	{
 		id=tid;
 		name = tname;
-		group=0;
+		group="????";
 		img=0;
 		isOnline=1;
 		
@@ -40,7 +41,13 @@ public class User implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
+	public int getIsCrowd() {
+		return iscrowd;
+	}
 
+	public void setIsCrowd(int id) {
+		this.iscrowd = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -71,11 +78,11 @@ public class User implements Serializable {
 		this.port = port;
 	}
 
-	public int getGroup() {
+	public String getGroup() {
 		return group;
 	}
 
-	public void setGroup(int group) {
+	public void setGroup(String group) {
 		this.group = group;
 	}
 
@@ -129,7 +136,7 @@ public class User implements Serializable {
 		return "User [id=" + id + ", name=" + name + ", email=" + email
 				+ ", password=" + password + ", isOnline=" + isOnline
 				+ ", img=" + img + ", group=" + group + ", ip=" + ip
-				+ ", port=" + port + "]";
+				+ ", port=" + port + ", iscrowd=" + iscrowd + "]";
 	}
 
 }
