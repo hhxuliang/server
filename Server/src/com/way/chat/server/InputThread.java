@@ -5,8 +5,10 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.way.chat.common.bean.AddNewFriendMsg;
+import com.way.chat.common.bean.CommonMsg;
 import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
 import com.way.chat.common.tran.bean.TranObject;
@@ -63,6 +65,28 @@ public class InputThread extends Thread {
 
 	}
 
+	public void getOffLineMessage(UserDao dao,int fromU,int toU)
+	{
+		//Send the offline message 
+		ArrayList<TranObject<TextMessage>> list_off_line_mss = dao.getOffLineMessage( fromU, toU);
+		System.out.println("8888888888888   "+list_off_line_mss.size());
+		if (list_off_line_mss != null) {// 如果登录成功					
+			for (TranObject<TextMessage> ms : list_off_line_mss) {
+				System.out.println("77777   "+list_off_line_mss.size());
+				out.setMessage(ms);// 
+			}
+		}
+	}
+	public void getCrowdOffLineMessage(UserDao dao,int fromU,int toU,OutputThread out_t)
+	{
+		//Send the offline message 
+		ArrayList<TranObject<TextMessage>> list_off_line_mss = dao.getCrowdOffLineMessage( fromU, toU);
+		if (list_off_line_mss != null) {// 如果登录成功					
+			for (TranObject<TextMessage> ms : list_off_line_mss) {
+				out_t.setMessage(ms);// 
+			}
+		}
+	}
 	/**
 	 * 读消息以及处理消息，抛出异常
 	 * 
@@ -91,6 +115,7 @@ public class InputThread extends Thread {
 			case LOGIN:
 				User loginUser = (User) read_tranObject.getObject();
 				ArrayList<User> list = dao.login(loginUser);
+				list.get(0).setOffLineMessUser(dao.haveOffLineMess(loginUser));//the first user in list should self.
 				TranObject<ArrayList<User>> login2Object = new TranObject<ArrayList<User>>(
 						TranObjectType.LOGIN);
 				if (list != null) {// 如果登录成功
@@ -110,7 +135,17 @@ public class InputThread extends Thread {
 				out.setMessage(login2Object);// 同时把登录信息回复给用户
 
 				System.out.println(MyDate.getDateCN() + " 用户："
-						+ loginUser.getId() + " 上线了");
+						+ loginUser.getId() + " 上线了");	
+				break;
+			case OFFLINEMESS:
+				int toUs=0,fromUs=0;
+				CommonMsg cm = (CommonMsg) read_tranObject.getObject();
+				System.out.println(cm.getarg3());
+				if(cm.getarg3().equals("0"))
+					getOffLineMessage(dao,Integer.parseInt(cm.getarg2()),Integer.parseInt(cm.getarg1()));
+				else
+					getCrowdOffLineMessage(dao,Integer.parseInt(cm.getarg2()),Integer.parseInt(cm.getarg1()),out);
+				
 				break;
 			case LOGOUT:// 如果是退出，更新数据库在线状态，同时群发告诉所有在线用户
 				User logoutUser = (User) read_tranObject.getObject();
@@ -139,13 +174,29 @@ public class InputThread extends Thread {
 				if (toOut != null) {// 如果用户在线
 					toOut.setMessage(read_tranObject);
 				} else {// 如果为空，说明用户已经下线,回复用户
-					TextMessage text = new TextMessage();
-					text.setMessage("亲！对方不在线哦，您的消息将暂时保存在服务器");
-					TranObject<TextMessage> offText = new TranObject<TextMessage>(
-							TranObjectType.MESSAGE);
-					offText.setObject(text);
-					offText.setFromUser(0);
-					out.setMessage(offText);
+					int fromU = read_tranObject.getFromUser();
+					TextMessage tm=(TextMessage)read_tranObject.getObject();
+					if(read_tranObject.getCrowd()==0){
+						TextMessage text = new TextMessage();
+						text.setMessage("亲！对方不在线哦，您的消息将暂时保存在服务器");
+						TranObject<TextMessage> offText = new TranObject<TextMessage>(
+								TranObjectType.MESSAGE);
+						offText.setObject(text);
+						offText.setFromUser(0);
+						out.setMessage(offText);
+						//we should save the message on db
+						dao.saveMessageOnDB(tm,fromU,id2);
+					}
+					else if(read_tranObject.getCrowd()==id2)
+					{
+						dao.saveCrowdMessageOnDB(tm,fromU,id2);
+						for (Map.Entry<Integer, OutputThread> entry : map.getMap().entrySet()) {
+							if(entry.getKey()!=fromU)
+								getCrowdOffLineMessage(dao,entry.getKey(),id2,entry.getValue());
+							
+						}
+						
+					}	
 				}
 				break;
 			case REFRESH:

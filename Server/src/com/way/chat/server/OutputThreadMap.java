@@ -18,6 +18,8 @@ public class OutputThreadMap {
 	private OutputThreadMap() {
 		map = new HashMap<Integer, OutputThread>();
 	}
+	
+	public HashMap<Integer, OutputThread> getMap(){return map;}
 
 	// 单例模式像外面提供该对象
 	public synchronized static OutputThreadMap getInstance() {

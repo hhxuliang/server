@@ -3,6 +3,7 @@ package com.way.chat.server;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import com.way.chat.common.tran.bean.TranObject;
 
@@ -15,7 +16,7 @@ import com.way.chat.common.tran.bean.TranObject;
 public class OutputThread extends Thread {
 	private OutputThreadMap map;
 	private ObjectOutputStream oos;
-	private TranObject object;
+	private ArrayList<TranObject> object = new ArrayList<TranObject>();
 	private boolean isStart = true;// 循环标志位
 	private Socket socket;
 
@@ -34,9 +35,9 @@ public class OutputThread extends Thread {
 	}
 
 	// 调用写消息线程，设置了消息之后，唤醒run方法，可以节约资源
-	public void setMessage(TranObject object) {
-		this.object = object;
+	public void setMessage(TranObject o) {
 		synchronized (this) {
+			this.object.add(o);
 			notify();
 		}
 	}
@@ -48,10 +49,15 @@ public class OutputThread extends Thread {
 				// 没有消息写出的时候，线程等待
 				synchronized (this) {
 					wait();
-				}
-				if (object != null) {
-					oos.writeObject(object);
-					oos.flush();
+				
+					if (object != null) {
+						for(TranObject o:object)
+						{
+							oos.writeObject(o);
+							oos.flush();
+						}
+						object.clear();
+					}
 				}
 			}
 			if (oos != null)// 循环结束后，关闭流，释放资源
