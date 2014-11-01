@@ -21,4 +21,5 @@ public enum TranObjectType {
 	ADDFRIEND,//添加朋友
 	ISOK, // 成功
 	ISERROR, // 失败
+	OFFLINEMESS,//离线消息
 }

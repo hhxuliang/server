@@ -1,64 +1,80 @@
 package com.way.chat.common.tran.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * ´«ÊäµÄ¶ÔÏó,Ö±½ÓÍ¨¹ıSocket´«ÊäµÄ×î´ó¶ÔÏó
+ * é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·äº©é”Ÿæ–¤æ‹·é”Ÿï¿½,ç›´é”Ÿæ–¤æ‹·é€šé”Ÿæ–¤æ‹·Socketé”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿï¿½
  * 
  * @author way
  */
-public class TranObject<T> implements Serializable
-{
+public class TranObject<T> implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private TranObjectType type;// ·¢ËÍµÄÏûÏ¢ÀàĞÍ
+	private TranObjectType type;// é”Ÿæ–¤æ‹·é”Ÿé…µç¢‰æ‹·é”Ÿæ–¤æ‹·æ¯é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
 
-	private int fromUser;// À´×ÔÄÄ¸öÓÃ»§
-	private int toUser;// ·¢ÍùÄÄ¸öÓÃ»§
+	private int fromUser;// é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿä¾¥é©æ‹·é”ŸçŸ«ä¼™æ‹·
+	private int toUser;// é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿä¾¥é©æ‹·é”ŸçŸ«ä¼™æ‹·
+	private int crowd;
+	private String fromusername;
+	private int fromimg;
 
-	private T object;// ´«ÊäµÄ¶ÔÏó£¬Õâ¸ö¶ÔÏóÎÒÃÇ¿ÉÒÔ×Ô¶¨ÒåÈÎºÎ
-	//private List<Integer> group;// Èº·¢¸øÄÄĞ©ÓÃ»§
+	private T object;// é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·äº©é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿè§’åŒ¡æ‹·é”Ÿæ–¤æ‹·é”Ÿçš†è®¹æ‹·é”Ÿæ–¤æ‹·é”Ÿè½¿çŒ´æ‹·
+	private List<Integer> group;// ç¾¤é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·äº›é”ŸçŸ«ä¼™æ‹·
 
-	public TranObject(TranObjectType type)
-	{
+	public TranObject(TranObjectType type) {
 		this.type = type;
 	}
 
-	public int getFromUser()
-	{
+	public String getFromUserName() {
+		return fromusername;
+	}
+
+	public void setFromUserName(String fromUser) {
+		this.fromusername = fromUser;
+	}
+	public int getFromImg() {
+		return fromimg;
+	}
+
+	public void setFromImg(int fromimg) {
+		this.fromimg = fromimg;
+	}
+	
+	public int getFromUser() {
 		return fromUser;
 	}
 
-	public void setFromUser(int fromUser)
-	{
+	public void setFromUser(int fromUser) {
 		this.fromUser = fromUser;
 	}
+	public int getCrowd() {
+		return crowd;
+	}
 
-	public int getToUser()
-	{
+	public void setCrowd(int id) {
+		this.crowd = id;
+	}
+	public int getToUser() {
 		return toUser;
 	}
 
-	public void setToUser(int toUser)
-	{
+	public void setToUser(int toUser) {
 		this.toUser = toUser;
 	}
 
-	public T getObject()
-	{
+	public T getObject() {
 		return object;
 	}
 
-	public void setObject(T object)
-	{
+	public void setObject(T object) {
 		this.object = object;
 	}
 
-	public TranObjectType getType()
-	{
+	public TranObjectType getType() {
 		return type;
 	}
 }

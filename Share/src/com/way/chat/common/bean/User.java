@@ -1,9 +1,10 @@
 package com.way.chat.common.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * ????
+ * 用户对象
  * 
  * @author way
  */
@@ -12,27 +13,36 @@ public class User implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id;// QQ??
+	private int id;// QQ号码
 	private String loginAccount;
 	private String mobile_NO;
-	private String name;// ??
-	private String email;// ??
-	private String password;// ??
-	private int isOnline;// ????
-	private int img;// ????
-	private String group;// ?????
+	private String name;// 昵称
+	private String email;// 邮箱
+	private String password;// 密码
+	private int isOnline;// 是否在线
+	private int img;// 头像图标
+	private String group;// 哪一个分组
 	private String ip;
 	private int port;
 	private int iscrowd;
+	private ArrayList<String>  OffLineMessUser;
 	public User(){}
 	public User(int tid,String tname)
 	{
 		id=tid;
 		name = tname;
-		group="????";
+		group="我的好友";
 		img=0;
 		isOnline=1;
 		
+	}
+	public ArrayList<String> getOffLineMessUser() {
+		return OffLineMessUser;
+	}
+
+
+	public void setOffLineMessUser(ArrayList<String> id) {
+		this.OffLineMessUser=id;
 	}
 	public int getId() {
 		return id;
