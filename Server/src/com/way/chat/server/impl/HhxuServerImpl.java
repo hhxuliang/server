@@ -97,7 +97,7 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 						ui = entityManagerWrapper.merge(ui);
 					}
 					session.write(write);
-					sessionMap.put(ui.getxId(), session);
+					sessionMap.put(ui.getXId(), session);
 				}
 				catch (Exception ex)
 				{
@@ -108,7 +108,7 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 			case LOGOUT:
 			{
 				User ui = read.getTranValue(User.class);
-				sessionMap.remove(ui.getxId());
+				sessionMap.remove(ui.getXId());
 				break;
 			}
 			case MESSAGE:

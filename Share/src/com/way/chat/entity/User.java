@@ -35,7 +35,7 @@ public class User extends EntityId
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createTime = null;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = {}, mappedBy = "user")
+	@OneToMany(fetch = FetchType.LAZY, cascade = {}, mappedBy = "owner")
 	private List<Group> groups = null;
 	@Transient
 	private List<Long> groupIds = null;
