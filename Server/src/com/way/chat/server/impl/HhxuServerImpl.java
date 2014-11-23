@@ -22,7 +22,7 @@ import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.tran.bean.TranObject;
 import com.way.chat.common.tran.bean.TranObjectType;
 import com.way.chat.common.util.Constants;
-import com.way.chat.entity.UserInfo;
+import com.way.chat.entity.User;
 import com.way.chat.server.HhxuServer;
 import com.xinitren.jpa.EntityManagerWrapper;
 import com.xinitren.jpa.EntityManagerWrapperFactory;
@@ -59,11 +59,11 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 		{
 			case REGISTER:
 			{
-				UserInfo ui = read.getTranValue(UserInfo.class);
+				User ui = read.getTranValue(User.class);
 				if (ui != null)
 				{
-					String strTemp = "select u from " + entityManagerWrapper.getTableName(UserInfo.class) + " u where u.email = ?1";
-					List<UserInfo> exists = entityManagerWrapper.query(em, UserInfo.class, strTemp, ui.getEmail());
+					String strTemp = "select u from " + entityManagerWrapper.getTableName(User.class) + " u where u.email = ?1";
+					List<User> exists = entityManagerWrapper.query(em, User.class, strTemp, ui.getEmail());
 					if (exists.isEmpty() == false)
 					{
 						write.setTranValue(new TextMessage("注册失败[" + ui.getEmail() + "]已经存在"));
@@ -80,10 +80,10 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 			}
 			case LOGIN:
 			{
-				UserInfo ui = read.getTranValue(UserInfo.class);
+				User ui = read.getTranValue(User.class);
 				try
 				{
-					List<UserInfo> users = entityManagerWrapper.query(em, UserInfo.class, "select u from " + entityManagerWrapper.getTableName(UserInfo.class) + " where (u.name = ?1 or u.email = ?2) and u.password = ?3", ui.getName(), ui.getEmail(), ui.getPassword());
+					List<User> users = entityManagerWrapper.query(em, User.class, "select u from " + entityManagerWrapper.getTableName(User.class) + " where (u.name = ?1 or u.email = ?2) and u.password = ?3", ui.getName(), ui.getEmail(), ui.getPassword());
 					if (users.isEmpty())
 					{
 						TextMessage tm = new TextMessage("登录失败，请检查名称、邮件和密码是否正确");
@@ -97,7 +97,7 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 						ui = entityManagerWrapper.merge(ui);
 					}
 					session.write(write);
-					sessionMap.put(ui.getUniqueId(), session);
+					sessionMap.put(ui.getxId(), session);
 				}
 				catch (Exception ex)
 				{
@@ -107,8 +107,8 @@ public class HhxuServerImpl extends IoHandlerAdapter implements Serializable, Hh
 			}
 			case LOGOUT:
 			{
-				UserInfo ui = read.getTranValue(UserInfo.class);
-				sessionMap.remove(ui.getUniqueId());
+				User ui = read.getTranValue(User.class);
+				sessionMap.remove(ui.getxId());
 				break;
 			}
 			case MESSAGE:
