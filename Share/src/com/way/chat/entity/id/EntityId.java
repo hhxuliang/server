@@ -15,21 +15,21 @@ public class EntityId implements Serializable
 	/** */
 	private static final long serialVersionUID = -1972261441976802384L;
 	@Id
-	@Column(name = "UniqueId", nullable = false, updatable = false)
-	@TableGenerator(name = "UniqueId", table = "UniqueIdFactory", allocationSize = 1, pkColumnName = "KeyName", valueColumnName = "KeyValue")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "UniqueId")
-	private long uniqueId = 0L;// QQ∫≈¬Î
-	@Column(name = "QName", length = 32)
+	@Column(name = "LxId", nullable = false, updatable = false)
+	@TableGenerator(name = "LxId", table = "LxIdFactory", allocationSize = 1, pkColumnName = "ColName", valueColumnName = "ColValue")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "LxId")
+	private long xId = 0L;// QQ∫≈¬Î
+	@Column(name = "SName", length = 32)
 	private String name = "";// Í«≥∆
 
-	public long getUniqueId()
+	public long getXId()
 	{
-		return uniqueId;
+		return xId;
 	}
 
-	public void setUniqueId(long uniqueId)
+	public void setXId(long xId)
 	{
-		this.uniqueId = uniqueId;
+		this.xId = xId;
 	}
 
 	public String getName()
