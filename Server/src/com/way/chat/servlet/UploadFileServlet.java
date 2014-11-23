@@ -22,7 +22,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class UploadFileServlet extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/HH/mm-ss-SSS");
 	private static final Random random = new Random();
 
 	public static final String IMAGE_PATH = "images";

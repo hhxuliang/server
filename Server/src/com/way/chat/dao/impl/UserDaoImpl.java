@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.way.chat.common.bean.AddNewFriendMsg;
-import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
-import com.way.chat.common.tran.bean.TranObject;
-import com.way.chat.common.tran.bean.TranObjectType;
 import com.way.chat.common.util.Constants;
 import com.way.chat.common.util.DButil;
 import com.way.chat.common.util.MyDate;
@@ -23,7 +20,7 @@ public class UserDaoImpl implements UserDao {
 	public int register(User u) {
 		int id;
 		Connection con = DButil.connect();
-		String sql1 = "insert into user(_name,_password,_email,_time,iscrowd) values(?,?,?,?,0)";
+		String sql1 = "insert into user(_name,_password,_email,_time) values(?,?,?,?)";
 		String sql2 = "select _id from user";
 		String sql3 = "select * from  user where _email=?";
 		String sql4 = "select * from  user where _name=?";
@@ -133,7 +130,7 @@ public class UserDaoImpl implements UserDao {
 		try {
 			for(String s:a.getFriends())
 			{
-				String sql = "insert into _" + a.getUserID() + " (_name,_isOnline,_group,_qq,_img) values ('',0,'我的好友',"+s+",0) ";
+				String sql = "insert into _" + a.getUserID() + " (_name,_isOnline,_group,_qq,_img) values ('',0,0,"+s+",0) ";
 				System.out.println(sql);
 				PreparedStatement ps = con.prepareStatement(sql);
 				int res = ps.executeUpdate();
@@ -147,31 +144,6 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 	
-	public ArrayList<String> haveOffLineMess(User loginUser)
-	{
-		ArrayList<String> list = new ArrayList<String>();;
-		Connection con = DButil.connect();
-		String sql ="select distinct fromuserid from qq.offlinemessage where touserid=" + loginUser.getId()+" union " +
-		"select crowdid from qq.crowdofflinemess where crowdid in(" + 
-		"select b._id from qq._" + loginUser.getId() +" as a, qq.user as b where a._qq=b._id and b.iscrowd=1) and readed=0 and userid=" + loginUser.getId();
-		PreparedStatement ps;
-		try {
-			ps = con.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			if (rs.first()) {
-				do {
-					list.add(rs.getString("fromuserid"));
-				} while (rs.next());
-			}
-			System.out.println(sql);
-			return list;
-		} catch (SQLException e) {
-			// e.printStackTrace();
-		} finally {
-			DButil.close(con);
-		}
-		return list;
-	}
 	/**
 	 * 查找自己
 	 */
@@ -189,8 +161,6 @@ public class UserDaoImpl implements UserDao {
 				me.setEmail(rs.getString("_email"));
 				me.setName(rs.getString("_name"));
 				me.setImg(rs.getInt("_img"));
-				me.setGroup("我的好友");
-				me.setIsCrowd(rs.getInt("iscrowd"));
 			}
 			return me;
 		} catch (SQLException e) {
@@ -210,7 +180,7 @@ public class UserDaoImpl implements UserDao {
 		list.add(me);// 先添加自己
 		Connection con = DButil.connect();
 		//String sql = "select * from _? ";
-		String sql = "SELECT UP._id as _id,UP._group as _group,UP._qq as _qq,UP._img as _img,UP._isOnline as _isOnline,user._name as _name,user.iscrowd as iscrowd FROM UP,user where UP._qq=user._id ";
+		String sql = "SELECT UP._id as _id,UP._group as _group,UP._qq as _qq,UP._img as _img,UP._isOnline as _isOnline,user._name as _name FROM UP,user where UP._qq=user._id ";
 		sql=sql.replaceAll("UP", "_"+id);
 		//System.out.println(sql);
 		PreparedStatement ps;
@@ -225,9 +195,7 @@ public class UserDaoImpl implements UserDao {
 					friend.setName(rs.getString("_name"));
 					friend.setIsOnline(rs.getInt("_isOnline"));
 					friend.setImg(rs.getInt("_img"));
-					friend.setGroup(rs.getString("_group"));
-					friend.setIsCrowd(rs.getInt("iscrowd"));
-					System.out.println("iscrowd is "+ friend.getIsCrowd());
+					friend.setGroup(rs.getInt("_group"));
 					list.add(friend);
 				} while (rs.next());
 			}
@@ -272,7 +240,7 @@ public class UserDaoImpl implements UserDao {
 					+ " (_id int auto_increment not null primary key,"
 					+ "_name varchar(20) not null,"
 					+ "_isOnline int(11) not null default 0,"
-					+ "_group varchar(20) not null default 0,"
+					+ "_group int(11) not null default 0,"
 					+ "_qq int(11) not null default 0,"
 					+ "_img int(11) not null default 0)";
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -371,150 +339,7 @@ public class UserDaoImpl implements UserDao {
 		}
 		return null;
 	}
-	
-	public boolean saveCrowdMessageOnDB(TextMessage tm,int fromU,int toU)
-	{
-		int msid=saveMessageOnDB( tm, fromU, toU);
-		if (msid==-1) return false;
-		User tU = findMe(toU);
-		Connection con = DButil.connect();
-		String sql="";
-		
-		try {		
-			sql = "insert  crowdofflinemess (crowdid,userid,offlinemessid,readed) " +
-			"select userid_a,userid_b,"+msid+",0 from friendship where userid_a = "+toU+" and userid_b <> "+fromU+" union " +
-			"select userid_b,userid_a,"+msid+",0 from friendship where userid_b = "+toU+" and userid_a <> "+fromU;
-			System.out.println(sql);
-			PreparedStatement ps = con.prepareStatement(sql);
-			int res = ps.executeUpdate();
-			
-			if (res>0) 
-				return true;
-			else
-				return false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			DButil.close(con);
-		}	
-		return false;
-	}
-	public int saveMessageOnDB(TextMessage tm,int fromU,int toU)
-	{
-		User tU = findMe(toU);
-		Connection con = DButil.connect();
-		String sql="";
-		
-		try {		
-			sql = "insert  offlinemessage(message,fromuserid,touserid) values ('"
-						+ tm.getMessage() +"'," + fromU + "," + toU	+ ")";
-			PreparedStatement ps = con.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
-			int res = ps.executeUpdate();
-			if (res>0){ 
-				ResultSet rs = ps.getGeneratedKeys();
-				int id=-1;
-				if(rs.next())
-				{
-				 id = rs.getInt(1);
-				}
-				return id;
-			}
-			else
-				return -1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			DButil.close(con);
-		}	
-		return -1;
-	}
-	public ArrayList<TranObject<TextMessage>> getOffLineMessage(int fromU,int toU)
-	{
-		Connection con = DButil.connect();
-		ArrayList<TranObject<TextMessage>> list = new ArrayList<TranObject<TextMessage>>();
-		try {
-			//here get all normal message
-			String sql = "select * from offlinemessage where touserid =" + fromU + " and fromuserid =" + toU ;
-			PreparedStatement ps = con.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			if (rs.first()) {
-				do {
-					TextMessage tm = new TextMessage();
-					tm.setMessage(rs.getString("message"));
-					TranObject<TextMessage> offText = new TranObject<TextMessage>(
-							TranObjectType.MESSAGE);
-					offText.setObject(tm);
-					offText.setFromUser(rs.getInt("fromuserid"));
-					offText.setToUser(rs.getInt("touserid"));
-					offText.setCrowd(-1);
-					list.add(offText);
-					System.out.println("mess is " + rs.getString("message"));
-				} while (rs.next());
-			}
-			ps.close();
-			System.out.println(sql);
-			sql =  "delete from offlinemessage where touserid =" + fromU + " and fromuserid =" + toU ;
-			System.out.println(sql);
-			PreparedStatement psd = con.prepareStatement(sql);
-			psd.execute();
-			System.out.println(sql);
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			DButil.close(con);
-		}
-		return null;
-	}
-	public ArrayList<TranObject<TextMessage>> getCrowdOffLineMessage(int fromU,int toU)
-	{
-		Connection con = DButil.connect();
-		ArrayList<TranObject<TextMessage>> list = new ArrayList<TranObject<TextMessage>>();
-		try {
-			//here get all normal message
-			String sql = "SELECT a.index as maxindex,a.*,b.*,c.* FROM qq.crowdofflinemess a, qq.offlinemessage b,user c where a.offlinemessid=b.index and crowdid="+
-			toU+" and "+"a.userid="+fromU+" and readed=0 and c._id=b.fromuserid order by a.index";
-			System.out.println(sql);
-			PreparedStatement ps = con.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			int index=0;
-			if (rs.first()) {
-				do {
-					TextMessage tm = new TextMessage();
-					tm.setMessage(rs.getString("message"));
-					TranObject<TextMessage> offText = new TranObject<TextMessage>(
-							TranObjectType.MESSAGE);
-					offText.setObject(tm);
-					offText.setFromUser(rs.getInt("fromuserid"));
-					offText.setToUser(rs.getInt("userid"));
-					offText.setCrowd(toU);
-					offText.setFromUserName(rs.getString("_name"));
-					offText.setFromImg(rs.getInt("_img"));
-					index=rs.getInt("maxindex");
-					list.add(offText);
-				} while (rs.next());
-			}
-			ps.close();
-			
-			sql = "delete from qq.crowdofflinemess where crowdid="+
-					toU+" and "+"userid="+fromU+" and readed=0 and qq.crowdofflinemess.index <=" + index;
-			System.out.println(sql);
-			ps = con.prepareStatement(sql);
-			ps.execute();
-			ps.close();
-			
-			sql = "delete from offlinemessage where offlinemessage.index not in (select offlinemessid from crowdofflinemess)";
-			System.out.println(sql);
-			ps = con.prepareStatement(sql);
-			ps.execute();
-			return list;
-		} catch (SQLException e) {
-			 e.printStackTrace();
-		} finally {
-			DButil.close(con);
-		}
-		return null;
-	}
+
 	public static void main(String[] args) {
 		User u = new User();
 		UserDaoImpl dao = new UserDaoImpl();
