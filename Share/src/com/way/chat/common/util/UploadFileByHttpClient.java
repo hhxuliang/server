@@ -4,16 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 
 public class UploadFileByHttpClient implements Serializable
 {
@@ -32,15 +28,11 @@ public class UploadFileByHttpClient implements Serializable
 				CloseableHttpClient client = HttpClients.createDefault();
 				try
 				{
-					List<NameValuePair> urlParas = new ArrayList<NameValuePair>();
-					urlParas.add(new BasicNameValuePair("ExtName", extName));
-
 					HttpPost post = new HttpPost(Constants.FILE_UPLOAD_URL);
 					MultipartEntityBuilder meb = MultipartEntityBuilder.create();
 					meb.addTextBody("Connection", "Keep-Alive");
 					meb.addTextBody("Charset", "UTF-8");
 					meb.addBinaryBody(fileName, fileTemp);
-					//meb.addPart("ExtName", new UrlEncodedFormEntity(urlParas));
 					post.setEntity(meb.build());
 					post.setHeader("ExtName", extName);
 					CloseableHttpResponse response = client.execute(post);
