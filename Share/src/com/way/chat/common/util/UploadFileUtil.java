@@ -41,7 +41,7 @@ public class UploadFileUtil
 						httpUrlConn.setRequestProperty("Connection", "Keep-Alive");
 						httpUrlConn.setRequestProperty("Charset", "UTF-8");
 						httpUrlConn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY);
-
+						httpUrlConn.setRequestProperty("ExtName", ".jpeg");
 						StringBuffer sb = new StringBuffer();
 						sb.append(BEGIN).append(BOUNDARY).append(LINE_END);
 						sb.append("Content-Disposition:form-data; name=\"" + fileName + "\"; filename=\"" + fileName + "\"" + LINE_END);
