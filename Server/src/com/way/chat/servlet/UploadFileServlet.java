@@ -46,6 +46,10 @@ public class UploadFileServlet extends HttpServlet
 		String extName = request.getParameter("ExtName");
 		if (extName == null)
 		{
+			extName = request.getHeader("ExtName");
+		}
+		if (extName == null)
+		{
 			extName = "";
 		}
 		response.setContentType("text/plain;charset=utf-8");
