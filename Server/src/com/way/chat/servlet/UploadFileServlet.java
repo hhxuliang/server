@@ -43,7 +43,11 @@ public class UploadFileServlet extends HttpServlet
 		factory.setSizeThreshold(4 * 1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		upload.setSizeMax(4 * 1024 * 1024);
-
+		String extName = request.getParameter("ExtName");
+		if (extName == null)
+		{
+			extName = "";
+		}
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter pw = response.getWriter();
 		try
@@ -61,7 +65,7 @@ public class UploadFileServlet extends HttpServlet
 				{
 					String urlPath = request.getRequestURL().toString().replace("UploadFile", "");
 					String realPath = request.getServletContext().getRealPath("/");
-					String fileName = IMAGE_PATH + "/" + getRandFileName("");
+					String fileName = IMAGE_PATH + "/" + getRandFileName(extName);
 					File fileTemp = new File(realPath + "/" + fileName);
 					if (fileTemp.getParentFile().exists() == false)
 					{
@@ -95,18 +99,21 @@ public class UploadFileServlet extends HttpServlet
 
 	protected String getFileNameExtension(String extName)
 	{
-		String rtnVal = "jpg";
-		int pos = extName.lastIndexOf('.');
-		if (pos > 0)
+		String rtnVal = extName;
+		if (rtnVal == null || rtnVal.trim().equals(""))
 		{
-			rtnVal = extName.substring(pos + 1);
+			rtnVal = ".jpg";
+		}
+		if (rtnVal.startsWith(".") == false)
+		{
+			rtnVal = "." + rtnVal;
 		}
 		return rtnVal;
 	}
 
 	protected String getRandFileName(String extName)
 	{
-		String rtnVal = String.format("%s-%d.%s", sdf.format(new Date()), random.nextInt(999), getFileNameExtension(extName));
+		String rtnVal = String.format("%s-%d%s", sdf.format(new Date()), random.nextInt(999), getFileNameExtension(extName));
 		return rtnVal;
 	}
 }
