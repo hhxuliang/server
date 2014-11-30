@@ -40,9 +40,8 @@ public class UploadFileServlet extends HttpServlet
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setSizeThreshold(4 * 1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(4 * 1024 * 1024);
+		upload.setSizeMax(4L * 1024L * 1024L * 1024L);
 		String extName = request.getParameter("ExtName");
 		if (extName == null)
 		{
