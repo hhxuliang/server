@@ -25,7 +25,7 @@ public class UploadFileServlet extends HttpServlet
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/HH/mm-ss-SSS");
 	private static final Random random = new Random();
 
-	public static final String IMAGE_PATH = "images";
+	public static final String UPLOAD_FILE_PATH = "ufiles";
 
 	public UploadFileServlet()
 	{
@@ -68,7 +68,7 @@ public class UploadFileServlet extends HttpServlet
 				{
 					String urlPath = request.getRequestURL().toString().replace("UploadFile", "");
 					String realPath = request.getServletContext().getRealPath("/");
-					String fileName = IMAGE_PATH + "/" + getRandFileName(extName);
+					String fileName = UPLOAD_FILE_PATH + "/" + getRandFileName(extName);
 					File fileTemp = new File(realPath + "/" + fileName);
 					if (fileTemp.getParentFile().exists() == false)
 					{
