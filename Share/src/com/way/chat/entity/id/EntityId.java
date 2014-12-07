@@ -18,18 +18,20 @@ public class EntityId implements Serializable
 	@Column(name = "LxId", nullable = false, updatable = false)
 	@TableGenerator(name = "LxId", table = "LxIdFactory", allocationSize = 1, pkColumnName = "ColName", valueColumnName = "ColValue")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "LxId")
-	private long xId = 0L;// QQ∫≈¬Î
+	private long id = 0L;// QQ∫≈¬Î
 	@Column(name = "SName", length = 32)
 	private String name = "";// Í«≥∆
+	@Column(name = "SDescr", length = 64)
+	private String descr = "";
 
-	public long getXId()
+	public long getId()
 	{
-		return xId;
+		return id;
 	}
 
-	public void setXId(long xId)
+	public void setId(long xId)
 	{
-		this.xId = xId;
+		this.id = xId;
 	}
 
 	public String getName()

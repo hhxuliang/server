@@ -72,7 +72,7 @@ public class UploadFileByHttpClient implements Serializable
 	public static void main(String[] args)
 	{
 		UploadFileByHttpClient ufu = new UploadFileByHttpClient();
-		String sss = ufu.doUploadFile("F:/08’’∆¨/IMG_8839.jpg", ".jpg");
+		String sss = ufu.doUploadFile("F:/02 ”∆µ/[üo¥a]≥’ùh¬∑æÄ∞Õ ø.rmvb", ".rmvb");
 		System.out.println(sss);
 	}
 

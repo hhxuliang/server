@@ -76,7 +76,7 @@ public class Group extends EntityId
 	{
 		if (owner != null)
 		{
-			ownerId = owner.getXId();
+			ownerId = owner.getId();
 		}
 		return ownerId;
 	}
