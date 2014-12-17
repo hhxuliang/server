@@ -3,10 +3,12 @@ package com.way.chat.dao;
 import java.util.ArrayList;
 
 import com.way.chat.common.bean.AddNewFriendMsg;
+import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
+import com.way.chat.common.tran.bean.TranObject;
 
 public interface UserDao {
-	//×¢²á³É¹¦·µ»ØÓÃ»§id
+	//×¢ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½id
 	public int register(User u);
 
 	public ArrayList<User> login(User u);
@@ -14,4 +16,12 @@ public interface UserDao {
 	public boolean addFriends(AddNewFriendMsg a);
 	public ArrayList<User> refresh(int id);
 	public void logout(int id);
+	public int saveMessageOnDB(TextMessage tm,int fromU,int toU);
+	public boolean saveCrowdMessageOnDB(TextMessage tm,int fromU,int toU);
+	public ArrayList<TranObject<TextMessage>> getOffLineMessage(int fromU);
+	public ArrayList<TranObject<TextMessage>> getCrowdOffLineMessage(int fromU,int crowd,String where);
+	public ArrayList<String> haveOffLineMess(User loginUser);
+	public boolean addMsg(TextMessage msg, int touid, int fromuid,String datestr);
+	public boolean updateDBbyMsgOk(String datekey, int fromuid);
+	public ArrayList<String> getFriends(int uid);
 }

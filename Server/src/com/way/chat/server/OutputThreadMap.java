@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ´æ·ÅĞ´Ïß³ÌµÄ»º´æÆ÷
+ * ï¿½ï¿½ï¿½Ğ´ï¿½ß³ÌµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½
  * 
  * @author way
  */
@@ -14,14 +14,14 @@ public class OutputThreadMap {
 	private HashMap<Integer, OutputThread> map;
 	private static OutputThreadMap instance;
 
-	// Ë½ÓĞ¹¹ÔìÆ÷£¬·ÀÖ¹±»ÍâÃæÊµÀı»¯¸Ä¶ÔÏñ
+	// Ë½ï¿½Ğ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½
 	private OutputThreadMap() {
 		map = new HashMap<Integer, OutputThread>();
 	}
 	
 	public HashMap<Integer, OutputThread> getMap(){return map;}
 
-	// µ¥ÀıÄ£Ê½ÏñÍâÃæÌá¹©¸Ã¶ÔÏó
+	// ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹©ï¿½Ã¶ï¿½ï¿½ï¿½
 	public synchronized static OutputThreadMap getInstance() {
 		if (instance == null) {
 			instance = new OutputThreadMap();
@@ -29,22 +29,22 @@ public class OutputThreadMap {
 		return instance;
 	}
 
-	// Ìí¼ÓĞ´Ïß³ÌµÄ·½·¨
+	// ï¿½ï¿½ï¿½Ğ´ï¿½ß³ÌµÄ·ï¿½ï¿½ï¿½
 	public synchronized void add(Integer id, OutputThread out) {
 		map.put(id, out);
 	}
 
-	// ÒÆ³ıĞ´Ïß³ÌµÄ·½·¨
+	// ï¿½Æ³ï¿½Ğ´ï¿½ß³ÌµÄ·ï¿½ï¿½ï¿½
 	public synchronized void remove(Integer id) {
 		map.remove(id);
 	}
 
-	// È¡³öĞ´Ïß³ÌµÄ·½·¨,ÈºÁÄµÄ»°£¬¿ÉÒÔ±éÀúÈ¡³ö¶ÔÓ¦Ğ´Ïß³Ì
+	// È¡ï¿½ï¿½Ğ´ï¿½ß³ÌµÄ·ï¿½ï¿½ï¿½,Èºï¿½ÄµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ó¦Ğ´ï¿½ß³ï¿½
 	public synchronized OutputThread getById(Integer id) {
 		return map.get(id);
 	}
 
-	// µÃµ½ËùÓĞĞ´Ïß³Ì·½·¨£¬ÓÃÓÚÏòËùÓĞÔÚÏßÓÃ»§·¢ËÍ¹ã²¥
+	// ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ß³Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Í¹ã²¥
 	public synchronized List<OutputThread> getAll() {
 		List<OutputThread> list = new ArrayList<OutputThread>();
 		for (Map.Entry<Integer, OutputThread> entry : map.entrySet()) {

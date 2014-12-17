@@ -3,12 +3,14 @@ package com.way.chat.server;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.way.chat.common.tran.bean.TranObject;
 
 /**
- * Ð´ÏûÏ¢Ïß³Ì
+ * Ð´ï¿½ï¿½Ï¢ï¿½ß³ï¿½
  * 
  * @author way
  * 
@@ -17,24 +19,32 @@ public class OutputThread extends Thread {
 	private OutputThreadMap map;
 	private ObjectOutputStream oos;
 	private ArrayList<TranObject> object = new ArrayList<TranObject>();
-	private boolean isStart = true;// Ñ­»·±êÖ¾Î»
+	private boolean isStart = true;// Ñ­ï¿½ï¿½ï¿½ï¿½Ö¾Î»
 	private Socket socket;
+	private String keystr;
 
-	public OutputThread(Socket socket, OutputThreadMap map) {
+	public String getKeystr() {
+		return keystr;
+	}
+	public void setKeystr(String keystr) {
+		this.keystr = keystr;
+	}
+	public OutputThread(Socket socket, OutputThreadMap map,String keys) {
 		try {
+			keystr=keys;
 			this.socket = socket;
 			this.map = map;
-			oos = new ObjectOutputStream(socket.getOutputStream());// ÔÚ¹¹ÔìÆ÷ÀïÃæÊµÀý»¯¶ÔÏóÊä³öÁ÷
+			oos = new ObjectOutputStream(socket.getOutputStream());// ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void setStart(boolean isStart) {
 		this.isStart = isStart;
 	}
 
-	// µ÷ÓÃÐ´ÏûÏ¢Ïß³Ì£¬ÉèÖÃÁËÏûÏ¢Ö®ºó£¬»½ÐÑrun·½·¨£¬¿ÉÒÔ½ÚÔ¼×ÊÔ´
+	// ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ï¢ï¿½ß³Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ö®ï¿½ó£¬»ï¿½ï¿½ï¿½runï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½Ô¼ï¿½ï¿½Ô´
 	public void setMessage(TranObject o) {
 		synchronized (this) {
 			this.object.add(o);
@@ -46,7 +56,7 @@ public class OutputThread extends Thread {
 	public void run() {
 		try {
 			while (isStart) {
-				// Ã»ÓÐÏûÏ¢Ð´³öµÄÊ±ºò£¬Ïß³ÌµÈ´ý
+				// Ã»ï¿½ï¿½ï¿½ï¿½Ï¢Ð´ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ß³ÌµÈ´ï¿½
 				synchronized (this) {
 					wait();
 				
@@ -55,12 +65,13 @@ public class OutputThread extends Thread {
 						{
 							oos.writeObject(o);
 							oos.flush();
+							oos.reset();
 						}
 						object.clear();
 					}
 				}
 			}
-			if (oos != null)// Ñ­»·½áÊøºó£¬¹Ø±ÕÁ÷£¬ÊÍ·Å×ÊÔ´
+			if (oos != null)// Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¹Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Ô´
 				oos.close();
 			if (socket != null)
 				socket.close();

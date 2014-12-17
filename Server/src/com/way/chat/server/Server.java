@@ -3,6 +3,8 @@ package com.way.chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -10,14 +12,14 @@ import com.way.chat.common.util.Constants;
 import com.way.chat.common.util.MyDate;
 
 /**
- * ·þÎñÆ÷£¬½ÓÊÜÓÃ»§µÇÂ¼¡¢ÀëÏß¡¢×ª·¢ÏûÏ¢
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ß¡ï¿½×ªï¿½ï¿½ï¿½ï¿½Ï¢
  * 
  * @author way
  * 
  */
 public class Server extends Thread
 {
-	private ExecutorService executorService;// Ïß³Ì³Ø
+	private ExecutorService executorService;// ï¿½ß³Ì³ï¿½
 	private ServerSocket serverSocket = null;
 	private Socket socket = null;
 	private boolean isStarted = true;
@@ -26,7 +28,7 @@ public class Server extends Thread
 	{
 		try
 		{
-			// ´´½¨Ïß³Ì³Ø£¬³ØÖÐ¾ßÓÐ(cpu¸öÊý*50)ÌõÏß³Ì
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì³Ø£ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½(cpuï¿½ï¿½ï¿½ï¿½*50)ï¿½ï¿½ï¿½ß³ï¿½
 			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 50);
 			serverSocket = new ServerSocket(Constants.SERVER_PORT);
 		}
@@ -46,10 +48,10 @@ public class Server extends Thread
 			{
 				socket = serverSocket.accept();
 				String ip = socket.getInetAddress().toString();
-				System.out.println(MyDate.getDateCN() + " ÓÃ»§£º" + ip + " ÒÑ½¨Á¢Á¬½Ó");
-				// ÎªÖ§³Ö¶àÓÃ»§²¢·¢·ÃÎÊ£¬²ÉÓÃÏß³Ì³Ø¹ÜÀíÃ¿Ò»¸öÓÃ»§µÄÁ¬½ÓÇëÇó
+				System.out.println(MyDate.getDateCN() + " ï¿½Ã»ï¿½ï¿½ï¿½" + ip + " ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+				// ÎªÖ§ï¿½Ö¶ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì³Ø¹ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (socket.isConnected())
-					executorService.execute(new SocketTask(socket));// Ìí¼Óµ½Ïß³Ì³Ø
+					executorService.execute(new SocketTask(socket));// ï¿½ï¿½Óµï¿½ï¿½ß³Ì³ï¿½
 			}
 			if (socket != null)
 				socket.close();
@@ -62,7 +64,12 @@ public class Server extends Thread
 			// isStarted = false;
 		}
 	}
-
+	public static String getDateMillis() {
+		SimpleDateFormat format = new SimpleDateFormat(
+				"yyyy_MM_dd_hh_mm_ss_SSS");
+		String date = format.format(new Date(System.currentTimeMillis()));
+		return date;
+	}
 	private final class SocketTask implements Runnable
 	{
 		private Socket socket = null;
@@ -79,9 +86,10 @@ public class Server extends Thread
 		@Override
 		public void run()
 		{
-			out = new OutputThread(socket, map);//
-			// ÏÈÊµÀý»¯Ð´ÏûÏ¢Ïß³Ì,£¨°Ñ¶ÔÓ¦ÓÃ»§µÄÐ´Ïß³Ì´æÈëmap»º´æÆ÷ÖÐ£©
-			in = new InputThread(socket, out, map);// ÔÙÊµÀý»¯¶ÁÏûÏ¢Ïß³Ì
+			String str=getDateMillis();
+			out = new OutputThread(socket, map,str);//
+			// ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ï¢ï¿½ß³ï¿½,ï¿½ï¿½ï¿½Ñ¶ï¿½Ó¦ï¿½Ã»ï¿½ï¿½ï¿½Ð´ï¿½ß³Ì´ï¿½ï¿½ï¿½mapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½
+			in = new InputThread(socket, out, map,str);// ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ß³ï¿½
 			out.setStart(true);
 			in.setStart(true);
 			in.start();
@@ -90,7 +98,7 @@ public class Server extends Thread
 	}
 
 	/**
-	 * ÍË³ö
+	 * ï¿½Ë³ï¿½
 	 */
 	public void quit()
 	{

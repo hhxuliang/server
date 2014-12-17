@@ -40,10 +40,19 @@ public class UploadFileServlet extends HttpServlet
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setSizeThreshold(4 * 1024);
+		//factory.setSizeThreshold(4 * 1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(4 * 1024 * 1024);
-
+		upload.setSizeMax(4L * 1024L * 1024L * 1024L);
+		String extName = request.getParameter("ExtName");
+		if (extName == null)
+		{
+			extName = request.getHeader("ExtName");
+		}
+		if (extName == null)
+		{
+			extName = "";
+		}
+		System.out.println("222222222  "+ extName.length());
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter pw = response.getWriter();
 		try
@@ -61,7 +70,7 @@ public class UploadFileServlet extends HttpServlet
 				{
 					String urlPath = request.getRequestURL().toString().replace("UploadFile", "");
 					String realPath = request.getServletContext().getRealPath("/");
-					String fileName = IMAGE_PATH + "/" + getRandFileName("");
+					String fileName = IMAGE_PATH + "/" + getRandFileName(extName);
 					File fileTemp = new File(realPath + "/" + fileName);
 					if (fileTemp.getParentFile().exists() == false)
 					{
@@ -69,7 +78,11 @@ public class UploadFileServlet extends HttpServlet
 					}
 					item.write(fileTemp);
 					pw.write(urlPath + fileName);
-					pw.write("\n");
+					//pw.write("\n");
+					System.out.println("filename " + fileName.substring(fileName.lastIndexOf(".")).length());
+					System.out.println("urlPath " +urlPath);
+					System.out.println("fileTemp " +fileTemp);
+					
 				}
 				catch (Exception ex)
 				{
@@ -95,18 +108,21 @@ public class UploadFileServlet extends HttpServlet
 
 	protected String getFileNameExtension(String extName)
 	{
-		String rtnVal = "jpg";
-		int pos = extName.lastIndexOf('.');
-		if (pos > 0)
+		String rtnVal = extName;
+		if (rtnVal == null || rtnVal.trim().equals(""))
 		{
-			rtnVal = extName.substring(pos + 1);
+			rtnVal = ".jpg";
+		}
+		if (rtnVal.startsWith(".") == false)
+		{
+			rtnVal = "." + rtnVal;
 		}
 		return rtnVal;
 	}
 
 	protected String getRandFileName(String extName)
 	{
-		String rtnVal = String.format("%s-%d.%s", sdf.format(new Date()), random.nextInt(999), getFileNameExtension(extName));
+		String rtnVal = String.format("%s-%d%s", sdf.format(new Date()), random.nextInt(999), getFileNameExtension(extName));
 		return rtnVal;
 	}
 }

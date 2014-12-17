@@ -5,8 +5,10 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.way.chat.common.bean.AddNewFriendMsg;
+import com.way.chat.common.bean.CommonMsg;
 import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
 import com.way.chat.common.tran.bean.TranObject;
@@ -16,202 +18,282 @@ import com.way.chat.dao.UserDao;
 import com.way.chat.dao.impl.UserDaoFactory;
 
 /**
- * ¶ÁÏûÏ¢Ïß³ÌºÍ´¦Àí·½·¨
+ * ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ß³ÌºÍ´ï¿½ï¿½ï¿½ï¿½ï¿½
  * 
  * @author way
  * 
  */
-public class InputThread extends Thread
-{
-	private Socket socket;// socket¶ÔÏó
-	private OutputThread out;// ´«µÝ½øÀ´µÄÐ´ÏûÏ¢Ïß³Ì£¬ÒòÎªÎÒÃÇÒª¸øÓÃ»§»Ø¸´ÏûÏ¢°¡
-	private OutputThreadMap map;// Ð´ÏûÏ¢Ïß³Ì»º´æÆ÷
-	private ObjectInputStream ois;// ¶ÔÏóÊäÈëÁ÷
-	private boolean isStart = true;// ÊÇ·ñÑ­»·¶ÁÏûÏ¢
+public class InputThread extends Thread {
+	private Socket socket;// socketï¿½ï¿½ï¿½ï¿½
+	private OutputThread out;// ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ï¢ï¿½ß³Ì£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+	private OutputThreadMap map;// Ð´ï¿½ï¿½Ï¢ï¿½ß³Ì»ï¿½ï¿½ï¿½ï¿½ï¿½
+	private ObjectInputStream ois;// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	private boolean isStart = true;// ï¿½Ç·ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+	private int key = 0;
+	private String keystr;
 
-	public InputThread(Socket socket, OutputThread out, OutputThreadMap map)
-	{
+	public InputThread(Socket socket, OutputThread out, OutputThreadMap map,
+			String strs) {
 		this.socket = socket;
 		this.out = out;
 		this.map = map;
-		try
-		{
-			ois = new ObjectInputStream(socket.getInputStream());// ÊµÀý»¯¶ÔÏóÊäÈëÁ÷
-		}
-		catch (IOException e)
-		{
+		keystr = strs;
+		try {
+			ois = new ObjectInputStream(socket.getInputStream());// Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void setStart(boolean isStart)
-	{// Ìá¹©½Ó¿Ú¸øÍâ²¿¹Ø±Õ¶ÁÏûÏ¢Ïß³Ì
+	public void setStart(boolean isStart) {// ï¿½á¹©ï¿½Ó¿Ú¸ï¿½ï¿½â²¿ï¿½Ø±Õ¶ï¿½ï¿½ï¿½Ï¢ï¿½ß³ï¿½
 		this.isStart = isStart;
 	}
 
 	@Override
-	public void run()
-	{
-		try
-		{
-			while (isStart)
-			{
-				// ¶ÁÈ¡ÏûÏ¢
+	public void run() {
+		try {
+			while (isStart) {
+				// ï¿½ï¿½È¡ï¿½ï¿½Ï¢
 				readMessage();
 			}
 			if (ois != null)
 				ois.close();
 			if (socket != null)
 				socket.close();
-		}
-		catch (ClassNotFoundException e)
-		{
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		catch (IOException e)
-		{
+		System.out.println("socket discon.............");
+		try {
+			if (ois != null)
+				ois.close();
+			if (socket != null)
+				socket.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		if (map.getById(key).getKeystr().equals(keystr))
+			map.remove(key);
+	}
 
+	public void getOffLineMessage(UserDao dao, int fromU) {
+		// Send the offline message
+		ArrayList<TranObject<TextMessage>> list_off_line_mss = dao
+				.getOffLineMessage(fromU);
+		if (list_off_line_mss != null) {// ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½É¹ï¿½
+			for (TranObject<TextMessage> ms : list_off_line_mss) {
+				out.setMessage(ms);//
+			}
+		}
+	}
+
+	public void getCrowdOffLineMessage(UserDao dao, int fromU, int crowd,
+			String where) {
+		// Send the offline message
+		ArrayList<TranObject<TextMessage>> list_off_line_mss = dao
+				.getCrowdOffLineMessage(fromU, crowd, where);
+		if (list_off_line_mss != null) {// ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½É¹ï¿½
+			for (TranObject<TextMessage> ms : list_off_line_mss) {
+				out.setMessage(ms);//
+			}
+		}
 	}
 
 	/**
-	 * ¶ÁÏûÏ¢ÒÔ¼°´¦ÀíÏûÏ¢£¬Å×³öÒì³£
+	 * ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½×³ï¿½ï¿½ì³£
 	 * 
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public void readMessage() throws IOException, ClassNotFoundException
-	{
-		Object readObject = ois.readObject();// ´ÓÁ÷ÖÐ¶ÁÈ¡¶ÔÏó
-		UserDao dao = UserDaoFactory.getInstance();// Í¨¹ýdaoÄ£Ê½¹ÜÀíºóÌ¨
-		if (readObject != null && readObject instanceof TranObject)
-		{
-			TranObject read_tranObject = (TranObject) readObject;// ×ª»»³É´«Êä¶ÔÏó
-			switch (read_tranObject.getType())
-			{
-				case REGISTER:// Èç¹ûÓÃ»§ÊÇ×¢²á
-					User registerUser = (User) read_tranObject.getObject();
-					int registerResult = dao.register(registerUser);
-					System.out.println(MyDate.getDateCN() + " ÐÂÓÃ»§×¢²á:" + registerResult);
-					// ¸øÓÃ»§»Ø¸´ÏûÏ¢
-					TranObject<User> register2TranObject = new TranObject<User>(TranObjectType.REGISTER);
-					User register2user = new User();
-					register2user.setId(registerResult);
-					register2TranObject.setObject(register2user);
-					out.setMessage(register2TranObject);
+	public void readMessage() throws IOException, ClassNotFoundException {
+		Object readObject = ois.readObject();// ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+		UserDao dao = UserDaoFactory.getInstance();// Í¨ï¿½ï¿½daoÄ£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨
+		if (readObject != null && readObject instanceof TranObject) {
+			TranObject read_tranObject = (TranObject) readObject;// ×ªï¿½ï¿½ï¿½É´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			switch (read_tranObject.getType()) {
+			case REGISTER:// ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½×¢ï¿½ï¿½
+				User registerUser = (User) read_tranObject.getObject();
+				int registerResult = dao.register(registerUser);
+				System.out
+						.println(MyDate.getDateCN() + " æ³¨å†Œ:" + registerResult);
+				// ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Ï¢
+				TranObject<User> register2TranObject = new TranObject<User>(
+						TranObjectType.REGISTER);
+				User register2user = new User();
+				register2user.setId(registerResult);
+				register2TranObject.setObject(register2user);
+				out.setMessage(register2TranObject);
+				break;
+			case LOGIN:
+				User loginUser = (User) read_tranObject.getObject();
+				ArrayList<User> list = dao.login(loginUser);
+				if (list == null)
 					break;
-				case LOGIN:
-					User loginUser = (User) read_tranObject.getObject();
-					ArrayList<User> list = dao.login(loginUser);
-					TranObject<ArrayList<User>> login2Object = new TranObject<ArrayList<User>>(TranObjectType.LOGIN);
-					if (list != null)
-					{// Èç¹ûµÇÂ¼³É¹¦
-						TranObject<User> onObject = new TranObject<User>(TranObjectType.LOGIN);
-						User login2User = new User();
-						login2User.setId(loginUser.getId());
-						onObject.setObject(login2User);
-						for (OutputThread onOut : map.getAll())
-						{
-							onOut.setMessage(onObject);// ¹ã²¥Ò»ÏÂÓÃ»§ÉÏÏß
+				list.get(0).setOffLineMessUser(dao.haveOffLineMess(loginUser));// the
+																				// first
+																				// user
+																				// in
+																				// list
+																				// should
+																				// self.
+				TranObject<ArrayList<User>> login2Object = new TranObject<ArrayList<User>>(
+						TranObjectType.LOGIN);
+				
+				map.add(loginUser.getId(), out);
+				login2Object.setObject(list);// ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½
+				key = loginUser.getId();
+
+				out.setMessage(login2Object);// Í¬Ê±ï¿½Ñµï¿½Â¼ï¿½ï¿½Ï¢ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½Ã»ï¿½
+
+				System.out.println(MyDate.getDateCN() + "ç”¨æˆ·"
+						+ loginUser.getId() + " ç™»é™†");
+				getOffLineMessage(dao, key);
+				// getCrowdOffLineMessage(dao, Integer.parseInt(cm.getarg2()),
+				// Integer.parseInt(cm.getarg1()), out);
+
+				break;
+			case LOGOUT:// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Í¬Ê±Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½
+				User logoutUser = (User) read_tranObject.getObject();
+				int offId = logoutUser.getId();
+				System.out.println(MyDate.getDateCN() + " ï¿½Ã»ï¿½ï¿½ï¿½" + offId
+						+ " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+				dao.logout(offId);
+				isStart = false;// ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ä¶ï¿½Ñ­ï¿½ï¿½
+				map.remove(offId);// ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½Æ³ï¿½
+				out.setMessage(null);// ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢È¥ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ß³ï¿½
+				out.setStart(false);// ï¿½Ù½ï¿½ï¿½ï¿½Ð´ï¿½ß³ï¿½Ñ­ï¿½ï¿½
+
+				TranObject<User> offObject = new TranObject<User>(
+						TranObjectType.LOGOUT);
+				User logout2User = new User();
+				logout2User.setId(logoutUser.getId());
+				offObject.setObject(logout2User);
+				for (OutputThread offOut : map.getAll()) {// ï¿½ã²¥ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+					offOut.setMessage(offObject);
+				}
+				break;
+			case MESSAGE:// ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èºï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½È¡ï¿½ï¿½Ï¢ï¿½ï¿½Òª×ªï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½idï¿½ï¿½È»ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ä¸Ã¶ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ß³ï¿½
+				int id2 = read_tranObject.getToUser();
+				int fromU = read_tranObject.getFromUser();
+				OutputThread toOut = map.getById(id2);
+				TextMessage tm = (TextMessage) read_tranObject.getObject();
+				String datestr = MyDate.getDateMillis();
+				dao.addMsg(tm, id2, fromU, datestr);
+				CommonMsg cmg = new CommonMsg();
+				cmg.setarg1(tm.getDatekey());
+				cmg.setarg2(id2 + "");
+				TranObject<CommonMsg> ack = new TranObject<CommonMsg>(
+						TranObjectType.ACKMSG);
+				ack.setObject(cmg);
+				ack.setFromUser(0);
+				out.setMessage(ack);
+				((TextMessage) read_tranObject.getObject())
+						.setServerdatekey(datestr);
+				if (toOut != null) {// ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+					toOut.setMessage(read_tranObject);
+					System.out.println("get message:" + tm.getMessage());
+				} else {// ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½Ëµï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ø¸ï¿½ï¿½Ã»ï¿½
+					if (read_tranObject.getCrowd() > 0) {
+						ArrayList<String> onlineid = null;
+						onlineid = dao.getFriends(read_tranObject.getCrowd());
+						if (onlineid != null && onlineid.size() > 0) {
+							for (String ss : onlineid) {
+								if (!ss.equals(read_tranObject.getFromUser()
+										+ "")) {
+									OutputThread toOutt = map.getById(Integer
+											.parseInt(ss));
+									if (toOutt != null) {
+										read_tranObject.setToUser(Integer
+												.parseInt(ss));
+										// read_tranObject.setCrowd(id);
+										toOutt.setMessage(read_tranObject);
+										System.out.println("is online :" + ss);
+									}
+								}
+							}
 						}
-						map.add(loginUser.getId(), out);// ÏÈ¹ã²¥£¬ÔÙ°Ñ¶ÔÓ¦ÓÃ»§idµÄÐ´Ïß³Ì´æÈëmapÖÐ£¬ÒÔ±ã×ª·¢ÏûÏ¢Ê±µ÷ÓÃ
-						login2Object.setObject(list);// °ÑºÃÓÑÁÐ±í¼ÓÈë»Ø¸´µÄ¶ÔÏóÖÐ
-					}
-					else
-					{
-						login2Object.setObject(null);
-					}
-					out.setMessage(login2Object);// Í¬Ê±°ÑµÇÂ¼ÐÅÏ¢»Ø¸´¸øÓÃ»§
-
-					System.out.println(MyDate.getDateCN() + " ÓÃ»§£º" + loginUser.getId() + " ÉÏÏßÁË");
-					break;
-				case LOGOUT:// Èç¹ûÊÇÍË³ö£¬¸üÐÂÊý¾Ý¿âÔÚÏß×´Ì¬£¬Í¬Ê±Èº·¢¸æËßËùÓÐÔÚÏßÓÃ»§
-					User logoutUser = (User) read_tranObject.getObject();
-					int offId = logoutUser.getId();
-					System.out.println(MyDate.getDateCN() + " ÓÃ»§£º" + offId + " ÏÂÏßÁË");
-					dao.logout(offId);
-					isStart = false;// ½áÊø×Ô¼ºµÄ¶ÁÑ­»·
-					map.remove(offId);// ´Ó»º´æµÄÏß³ÌÖÐÒÆ³ý
-					out.setMessage(null);// ÏÈÒªÉèÖÃÒ»¸ö¿ÕÏûÏ¢È¥»½ÐÑÐ´Ïß³Ì
-					out.setStart(false);// ÔÙ½áÊøÐ´Ïß³ÌÑ­»·
-
-					TranObject<User> offObject = new TranObject<User>(TranObjectType.LOGOUT);
-					User logout2User = new User();
-					logout2User.setId(logoutUser.getId());
-					offObject.setObject(logout2User);
-					for (OutputThread offOut : map.getAll())
-					{// ¹ã²¥ÓÃ»§ÏÂÏßÏûÏ¢
-						offOut.setMessage(offObject);
-					}
-					break;
-				case MESSAGE:// Èç¹ûÊÇ×ª·¢ÏûÏ¢£¨¿ÉÌí¼ÓÈº·¢£©
-					// »ñÈ¡ÏûÏ¢ÖÐÒª×ª·¢µÄ¶ÔÏóid£¬È»ºó»ñÈ¡»º´æµÄ¸Ã¶ÔÏóµÄÐ´Ïß³Ì
-					int id2 = read_tranObject.getToUser();
-					OutputThread toOut = map.getById(id2);
-					if (toOut != null)
-					{// Èç¹ûÓÃ»§ÔÚÏß
-						toOut.setMessage(read_tranObject);
-					}
-					else
-					{// Èç¹ûÎª¿Õ£¬ËµÃ÷ÓÃ»§ÒÑ¾­ÏÂÏß,»Ø¸´ÓÃ»§
-						TextMessage text = new TextMessage();
-						text.setMessage("Ç×£¡¶Ô·½²»ÔÚÏßÅ¶£¬ÄúµÄÏûÏ¢½«ÔÝÊ±±£´æÔÚ·þÎñÆ÷");
-						TranObject<TextMessage> offText = new TranObject<TextMessage>(TranObjectType.MESSAGE);
-						offText.setObject(text);
-						offText.setFromUser(0);
-						out.setMessage(offText);
-					}
-					break;
-				case REFRESH:
-					List<User> refreshList = dao.refresh(read_tranObject.getFromUser());
-					TranObject<List<User>> refreshO = new TranObject<List<User>>(TranObjectType.REFRESH);
-					refreshO.setObject(refreshList);
-					out.setMessage(refreshO);
-					System.out.println(MyDate.getDateCN() + " Ë¢ÐÂÅóÓÑ×´Ì¬");
-					break;
-				case ALLUSERS:
-					User loginUser1 = (User) read_tranObject.getObject();
-					ArrayList<User> list1 = dao.allUsers(loginUser1);
-					TranObject<ArrayList<User>> login2Object1 = new TranObject<ArrayList<User>>(TranObjectType.ALLUSERS);
-					if (list1 != null)
-					{
-						login2Object1.setObject(list1);// °ÑºÃÓÑÁÐ±í¼ÓÈë»Ø¸´µÄ¶ÔÏóÖÐ
-					}
-					else
-					{
-						login2Object1.setObject(null);
-					}
-					out.setMessage(login2Object1);// Í¬Ê±°ÑµÇÂ¼ÐÅÏ¢»Ø¸´¸øÓÃ»§
-
-					System.out.println(MyDate.getDateCN() + " ÏÔÊ¾ËùÓÐÓÃ»§ÐÅÏ¢");
-					break;
-				case ADDFRIEND:
-					AddNewFriendMsg friends = (AddNewFriendMsg) read_tranObject.getObject();
-					TextMessage text = new TextMessage();
-					TranObject<TextMessage> infoText;
-					if (dao.addFriends(friends))
-					{
-						text.setMessage("Ìí¼ÓÐÂÅóÓÑ³É¹¦,ÄãÂíÉÏ¿ÉÒÔºÍËûÁÄÌìÁÏÅ¶!");
-						infoText = new TranObject<TextMessage>(TranObjectType.ISOK);
-						System.out.println(MyDate.getDateCN() + " Ìí¼ÓÐÂÅóÓÑ³É¹¦!");
-					}
-					else
-					{
-						text.setMessage("Ìí¼ÓÐÂÅóÓÑÊ§°Ü,ÇëÁªÏµ¹ÜÀíÔ±!");
-						infoText = new TranObject<TextMessage>(TranObjectType.ISERROR);
-						System.out.println(MyDate.getDateCN() + " Ìí¼ÓÐÂÅóÓÑÊ§°Ü!");
 					}
 
-					infoText.setObject(text);
-					infoText.setFromUser(0);
-					out.setMessage(infoText);
+				}
+				break;
+			case REFRESH:
+				List<User> refreshList = dao.refresh(read_tranObject
+						.getFromUser());
+				TranObject<List<User>> refreshO = new TranObject<List<User>>(
+						TranObjectType.REFRESH);
+				refreshO.setObject(refreshList);
+				out.setMessage(refreshO);
+				System.out.println(MyDate.getDateCN() + " Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬");
+				break;
+			case ALLUSERS:
+				User loginUser1 = (User) read_tranObject.getObject();
+				ArrayList<User> list1 = dao.allUsers(loginUser1);
+				TranObject<ArrayList<User>> login2Object1 = new TranObject<ArrayList<User>>(
+						TranObjectType.ALLUSERS);
+				if (list1 != null) {
+					login2Object1.setObject(list1);// ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½
+				} else {
+					login2Object1.setObject(null);
+				}
+				out.setMessage(login2Object1);// Í¬Ê±ï¿½Ñµï¿½Â¼ï¿½ï¿½Ï¢ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½Ã»ï¿½
 
-					break;
+				System.out.println(MyDate.getDateCN() + " ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ï¢");
+				break;
+			case ADDFRIEND:
+				AddNewFriendMsg friends = (AddNewFriendMsg) read_tranObject
+						.getObject();
+				TextMessage text = new TextMessage();
+				TranObject<TextMessage> infoText;
+				if (dao.addFriends(friends)) {
+					text.setMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ³É¹ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¶!");
+					infoText = new TranObject<TextMessage>(TranObjectType.ISOK);
+					System.out.println(MyDate.getDateCN() + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ³É¹ï¿½!");
+				} else {
+					text.setMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½Ô±!");
+					infoText = new TranObject<TextMessage>(
+							TranObjectType.ISERROR);
+					System.out.println(MyDate.getDateCN() + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½!");
+				}
 
-				default:
-					break;
+				infoText.setObject(text);
+				infoText.setFromUser(0);
+				out.setMessage(infoText);
+
+				break;
+			case HEARTBEAT:
+				CommonMsg com = new CommonMsg();
+				com.setarg1("1");
+				com.setarg2("1");
+				com.setarg3("1");
+				TranObject<CommonMsg> msg2Object = new TranObject<CommonMsg>(
+						TranObjectType.HEARTBEAT);
+				msg2Object.setObject(com);
+				out.setMessage(msg2Object);
+			case ACKMSG:
+				CommonMsg cm = (CommonMsg) read_tranObject.getObject();
+				int fromUid = read_tranObject.getFromUser();
+
+				if (cm.getarg1() != null && cm.getarg1().length() > 0)
+					dao.updateDBbyMsgOk(cm.getarg1(), fromUid);
+				break;
+			case CROWDOFFLINEMSG:
+				CommonMsg cmm = (CommonMsg) read_tranObject.getObject();
+				String where = "";
+				int idforu = read_tranObject.getFromUser();
+				int crowdid = read_tranObject.getCrowd();
+				System.out.println("get crowd off line msg");
+				if (cmm.getarg1() != null && cmm.getarg1().length() > 0) {
+					where = cmm.getarg1();
+
+				}
+				getCrowdOffLineMessage(dao, idforu, crowdid, where);
+				break;
+			default:
+				break;
 			}
 		}
 	}
