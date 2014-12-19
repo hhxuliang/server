@@ -178,7 +178,8 @@ public class UserDaoImpl implements UserDao {
 			System.out.println(sql);
 			PreparedStatement ps = con.prepareStatement(sql);
 			int res = ps.executeUpdate();
-			return true;
+			if(res>0)
+				return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -329,7 +330,8 @@ public class UserDaoImpl implements UserDao {
 					+ "_fromuser int(11) not null default 0,"
 					+ "_msgtime varchar(30),"
 					+ "_type int(11) not null default 0,"
-					+ "_datekey varchar(30) not null ," + "_readit int(11)) DEFAULT CHARSET=utf8";
+					+ "_datekey varchar(30) not null ," + "_readit int(11),"
+					+ "UNIQUE KEY msgid  (_fromuser,_datekey)) DEFAULT CHARSET=utf8";
 			ps = con.prepareStatement(sql);
 			res = ps.executeUpdate();
 			System.out.println(res);

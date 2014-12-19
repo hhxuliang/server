@@ -13,6 +13,7 @@ import com.way.chat.common.bean.TextMessage;
 import com.way.chat.common.bean.User;
 import com.way.chat.common.tran.bean.TranObject;
 import com.way.chat.common.tran.bean.TranObjectType;
+import com.way.chat.common.util.Constants;
 import com.way.chat.common.util.MyDate;
 import com.way.chat.dao.UserDao;
 import com.way.chat.dao.impl.UserDaoFactory;
@@ -75,7 +76,9 @@ public class InputThread extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (map.getById(key).getKeystr().equals(keystr))
+		if (map != null && map.getById(key) != null
+				&& map.getById(key).getKeystr() != null
+				&& map.getById(key).getKeystr().equals(keystr))
 			map.remove(key);
 	}
 
@@ -141,7 +144,7 @@ public class InputThread extends Thread {
 																				// self.
 				TranObject<ArrayList<User>> login2Object = new TranObject<ArrayList<User>>(
 						TranObjectType.LOGIN);
-				
+
 				map.add(loginUser.getId(), out);
 				login2Object.setObject(list);// �Ѻ����б����ظ��Ķ�����
 				key = loginUser.getId();
@@ -182,7 +185,7 @@ public class InputThread extends Thread {
 				OutputThread toOut = map.getById(id2);
 				TextMessage tm = (TextMessage) read_tranObject.getObject();
 				String datestr = MyDate.getDateMillis();
-				dao.addMsg(tm, id2, fromU, datestr);
+
 				CommonMsg cmg = new CommonMsg();
 				cmg.setarg1(tm.getDatekey());
 				cmg.setarg2(id2 + "");
@@ -191,6 +194,8 @@ public class InputThread extends Thread {
 				ack.setObject(cmg);
 				ack.setFromUser(0);
 				out.setMessage(ack);
+				if (false == dao.addMsg(tm, id2, fromU, datestr))
+					break;
 				((TextMessage) read_tranObject.getObject())
 						.setServerdatekey(datestr);
 				if (toOut != null) {// ����û�����
@@ -279,6 +284,20 @@ public class InputThread extends Thread {
 
 				if (cm.getarg1() != null && cm.getarg1().length() > 0)
 					dao.updateDBbyMsgOk(cm.getarg1(), fromUid);
+				break;
+			case VERSION:
+				CommonMsg cm_v = (CommonMsg) read_tranObject.getObject();
+				fromUid = read_tranObject.getFromUser();
+
+				if (cm_v.getarg1() != null && cm_v.getarg1().length() > 0)
+					if (cm_v.getarg1().compareTo(Constants.VERSION) != 0) {
+						CommonMsg com_v = new CommonMsg();
+						com_v.setarg1(Constants.VERSION);
+						TranObject<CommonMsg> msg2Object_v = new TranObject<CommonMsg>(
+								TranObjectType.VERSION);
+						msg2Object_v.setObject(com_v);
+						out.setMessage(msg2Object_v);
+					}
 				break;
 			case CROWDOFFLINEMSG:
 				CommonMsg cmm = (CommonMsg) read_tranObject.getObject();
