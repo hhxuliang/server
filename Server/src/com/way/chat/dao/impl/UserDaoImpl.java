@@ -559,7 +559,7 @@ public class UserDaoImpl implements UserDao {
 			// here get all normal message
 			if (where == null || where.equals("")) {
 				sql = "select * from _" + crowdid + "_msg a, user b"
-						+ " where a._fromuser <> " + uid;
+						+ " where a._fromuser=b._id and a._fromuser <> " + uid;
 
 			} else {
 				sql = "select * from _" + crowdid + "_msg a, user b"
