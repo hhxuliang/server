@@ -103,6 +103,7 @@ public class UserDaoImpl implements UserDao {
 				do{
 				listuid.add(rs.getInt("_qq")+"");
 				}while (rs.next());
+				System.out.println(sql);
 				return listuid;
 			}
 		} catch (SQLException e) {

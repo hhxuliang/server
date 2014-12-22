@@ -196,13 +196,16 @@ public class InputThread extends Thread {
 				out.setMessage(ack);
 				if (false == dao.addMsg(tm, id2, fromU, datestr))
 					break;
+				System.out.println("crowd id is "+read_tranObject.getCrowd());
+				
 				((TextMessage) read_tranObject.getObject())
 						.setServerdatekey(datestr);
-				if (toOut != null) {// ����û�����
+				if (toOut != null && read_tranObject.getCrowd()==0) {// ����û�����
 					toOut.setMessage(read_tranObject);
 					System.out.println("get message:" + tm.getMessage());
 				} else {// ���Ϊ�գ�˵���û��Ѿ�����,�ظ��û�
 					if (read_tranObject.getCrowd() > 0) {
+						System.out.println("crowd id is "+read_tranObject.getCrowd());
 						ArrayList<String> onlineid = null;
 						onlineid = dao.getFriends(read_tranObject.getCrowd());
 						if (onlineid != null && onlineid.size() > 0) {
