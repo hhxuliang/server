@@ -91,18 +91,19 @@ public class UserDaoImpl implements UserDao {
 		}
 		return null;
 	}
+
 	@Override
 	public ArrayList<String> getFriends(int uid) {
 		Connection con = DButil.connect();
 		ArrayList<String> listuid = new ArrayList<String>();
-		String sql = "select * from _" + uid + "" ;
+		String sql = "select * from _" + uid + " where _role=0";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.first()) {
-				do{
-				listuid.add(rs.getInt("_qq")+"");
-				}while (rs.next());
+				do {
+					listuid.add(rs.getInt("_qq") + "");
+				} while (rs.next());
 				System.out.println(sql);
 				return listuid;
 			}
@@ -113,6 +114,7 @@ public class UserDaoImpl implements UserDao {
 		}
 		return null;
 	}
+
 	@Override
 	public ArrayList<User> allUsers(User u) {
 		Connection con = DButil.connect();
@@ -174,12 +176,12 @@ public class UserDaoImpl implements UserDao {
 					+ touid
 					+ "_msg (_msg,_fromuser,_msgtime,_type,_datekey,_readit) values ('"
 					+ msg.getMessage() + "'," + fromuid + ",'" + datestr + "',"
-					+ (msg.get_is_pic() ? 1 : 0) + ",'" + msg.getDatekey()
+					+ msg.getmsgtype() + ",'" + msg.getDatekey()
 					+ "',0) ";
 			System.out.println(sql);
 			PreparedStatement ps = con.prepareStatement(sql);
 			int res = ps.executeUpdate();
-			if(res>0)
+			if (res > 0)
 				return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -322,16 +324,20 @@ public class UserDaoImpl implements UserDao {
 					+ "_isOnline int(11) not null default 0,"
 					+ "_group varchar(20) not null default 0,"
 					+ "_qq int(11) not null default 0,"
-					+ "_img int(11) not null default 0) DEFAULT CHARSET=utf8";
+					+ "_img int(11) not null default 0,"
+					+ "_role int(11) not null default 0) DEFAULT CHARSET=utf8";
 			PreparedStatement ps = con.prepareStatement(sql);
 			int res = ps.executeUpdate();
-			sql = "create table _" + id + "_msg"
+			sql = "create table _"
+					+ id
+					+ "_msg"
 					+ " (_id int auto_increment not null primary key,"
 					+ "_msg varchar(255) not null,"
 					+ "_fromuser int(11) not null default 0,"
 					+ "_msgtime varchar(30),"
 					+ "_type int(11) not null default 0,"
-					+ "_datekey varchar(30) not null ," + "_readit int(11),"
+					+ "_datekey varchar(30) not null ,"
+					+ "_readit int(11),_update int(11) not null default 0,"
 					+ "UNIQUE KEY msgid  (_fromuser,_datekey)) DEFAULT CHARSET=utf8";
 			ps = con.prepareStatement(sql);
 			res = ps.executeUpdate();
@@ -518,14 +524,15 @@ public class UserDaoImpl implements UserDao {
 		ArrayList<TranObject<TextMessage>> list = new ArrayList<TranObject<TextMessage>>();
 		try {
 			// here get all normal message
-			String sql = "select * from _" + fromU + "_msg a,user b where a._fromuser=b._id and a._readit=0";
+			String sql = "select * from _" + fromU
+					+ "_msg a,user b where a._fromuser=b._id and a._readit=0";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			if (rs.first()) {
 				do {
 					TextMessage tm = new TextMessage();
 					tm.setMessage(rs.getString("_msg"));
-					tm.set_is_pic((rs.getInt("_type") == 0 ? false : true));
+					tm.setmsgtype(rs.getInt("_type"));
 					tm.setDatekey(rs.getString("_datekey"));
 					tm.setServerdatekey(rs.getString("_msgtime"));
 					tm.setMessageid(rs.getInt("_id"));
@@ -551,22 +558,53 @@ public class UserDaoImpl implements UserDao {
 		return null;
 	}
 
+	public int findRole(int crowdid,int uid) {
+		Connection con = DButil.connect();
+		int role = -1;
+		String sql = "select * from _" + crowdid + " where _qq=" + uid;
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			if (rs.first()) {
+				role = rs.getInt("_role");
+				System.out.println(sql);
+				return role;
+			}
+		} catch (SQLException e) {
+			// e.printStackTrace();
+		} finally {
+			DButil.close(con);
+		}
+		return role;
+	}
+
 	public ArrayList<TranObject<TextMessage>> getCrowdOffLineMessage(int uid,
 			int crowdid, String where) {
 		Connection con = DButil.connect();
 		ArrayList<TranObject<TextMessage>> list = new ArrayList<TranObject<TextMessage>>();
-		String sql="";
+		String sql = "";
+		int role = findRole(crowdid,uid);
+		if (role == -1)
+			return null;
 		try {
 			// here get all normal message
-			if (where == null || where.equals("")) {
-				sql = "select * from _" + crowdid + "_msg a, user b"
-						+ " where a._fromuser=b._id and a._fromuser <> " + uid;
+			if (role == 0) {
+				if (where == null || where.equals("")) {
+					sql = "select * from _" + crowdid + "_msg a, user b"
+							+ " where a._fromuser=b._id and a._fromuser <> "
+							+ uid;
 
-			} else {
+				} else {
+					sql = "select * from _" + crowdid + "_msg a, user b"
+							+ " where a._fromuser <> " + uid
+							+ "  and a._fromuser=b._id and a._msgtime >'"
+							+ where + "'";
+				}
+			} else if (role != 0) {
 				sql = "select * from _" + crowdid + "_msg a, user b"
-						+ " where a._fromuser <> " + uid
-						+ "  and a._fromuser=b._id and a._msgtime >'" + where + "'";
+						+ " where a._fromuser=b._id and a._update=1 and a._fromuser =" + uid;
 			}
+
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			int index = 0;
@@ -574,7 +612,7 @@ public class UserDaoImpl implements UserDao {
 				do {
 					TextMessage tm = new TextMessage();
 					tm.setMessage(rs.getString("_msg"));
-					tm.set_is_pic((rs.getInt("_type") == 0 ? false : true));
+					tm.setmsgtype(rs.getInt("_type"));
 					tm.setDatekey(rs.getString("_datekey"));
 					tm.setServerdatekey(rs.getString("_msgtime"));
 					tm.setMessageid(rs.getInt("_id"));
