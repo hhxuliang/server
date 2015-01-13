@@ -77,4 +77,8 @@ public class TranObject<T> implements Serializable {
 	public TranObjectType getType() {
 		return type;
 	}
+	@Override
+	public String toString() {
+		return "";
+	}
 }

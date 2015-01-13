@@ -2,6 +2,8 @@ package com.way.chat.server;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import com.way.chat.common.tran.bean.TranObject;
  */
 public class OutputThread extends Thread {
 	private OutputThreadMap map;
-	private ObjectOutputStream oos;
+	private MyOutputStream oos;
 	private List<TranObject> object = Collections
 			.synchronizedList(new ArrayList<TranObject>());
 	private boolean isStart = true;// ѭ����־λ
@@ -40,7 +42,7 @@ public class OutputThread extends Thread {
 			keystr = keys;
 			this.socket = socket;
 			this.map = map;
-			oos = new ObjectOutputStream(socket.getOutputStream());// �ڹ���������ʵ�������������
+			oos = new MyOutputStream(socket.getOutputStream(),1);// �ڹ���������ʵ�������������
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,16 +67,16 @@ public class OutputThread extends Thread {
 				// û����Ϣд����ʱ���̵߳ȴ�
 				synchronized (this) {
 					wait();
-					Iterator i = object.iterator(); // Must be in synchronized block
-				    while (i.hasNext())
-				   	{
-				    	TranObject o=(TranObject)i.next();
+					Iterator i = object.iterator(); // Must be in synchronized
+													// block
+					while (i.hasNext()) {
+						TranObject o = (TranObject) i.next();
 						oos.writeObject(o);
 						oos.flush();
 						oos.reset();
 					}
 					object.clear();
-					
+
 				}
 			}
 			if (oos != null)// ѭ�������󣬹ر������ͷ���Դ
@@ -85,6 +87,81 @@ public class OutputThread extends Thread {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+}
+
+class MyOutputStream {
+
+	private PrintWriter pw = null;
+	private ObjectOutputStream oos = null;
+	int streamType = -1;
+
+	public MyOutputStream(OutputStream o, int stream_type) throws IOException {
+		streamType = stream_type;
+		switch (streamType) {
+		case 0:
+			pw = new PrintWriter(o);
+			break;
+		case 1:
+			oos = new ObjectOutputStream(o);
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	public void writeObject(TranObject o) throws IOException {
+		switch (streamType) {
+		case 0:
+			//pw.println(o.toString());
+			break;
+		case 1:
+			oos.writeObject(o);
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	public void flush() throws IOException {
+		switch (streamType) {
+		case 0:
+			pw.flush();
+			break;
+		case 1:
+			oos.flush();
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void reset() throws IOException {
+		switch (streamType) {
+		case 0:
+			//pw.reset();
+			break;
+		case 1:
+			oos.reset();
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void close() throws IOException {
+		switch (streamType) {
+		case 0:
+			pw.close();
+			break;
+		case 1:
+			oos.close();
+			break;
+		default:
+			break;
 		}
 	}
 }

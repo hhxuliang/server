@@ -1,7 +1,12 @@
 package com.way.chat.server;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,7 @@ public class InputThread extends Thread {
 	private Socket socket;// socket����
 	private OutputThread out;// ���ݽ�����д��Ϣ�̣߳���Ϊ����Ҫ���û��ظ���Ϣ��
 	private OutputThreadMap map;// д��Ϣ�̻߳�����
-	private ObjectInputStream ois;// ����������
+	private MyInputStream ois;// ����������
 	private boolean isStart = true;// �Ƿ�ѭ������Ϣ
 	private int key = 0;
 	private String keystr;
@@ -40,7 +45,7 @@ public class InputThread extends Thread {
 		this.map = map;
 		keystr = strs;
 		try {
-			ois = new ObjectInputStream(socket.getInputStream());// ʵ��������������
+			ois = new MyInputStream(socket.getInputStream(), 1);// ʵ��������������
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -196,16 +201,17 @@ public class InputThread extends Thread {
 				out.setMessage(ack);
 				if (false == dao.addMsg(tm, id2, fromU, datestr))
 					break;
-				System.out.println("crowd id is "+read_tranObject.getCrowd());
-				
+				System.out.println("crowd id is " + read_tranObject.getCrowd());
+
 				((TextMessage) read_tranObject.getObject())
 						.setServerdatekey(datestr);
-				if (toOut != null && read_tranObject.getCrowd()==0) {// ����û�����
+				if (toOut != null && read_tranObject.getCrowd() == 0) {// ����û�����
 					toOut.setMessage(read_tranObject);
 					System.out.println("get message:" + tm.getMessage());
 				} else {// ���Ϊ�գ�˵���û��Ѿ�����,�ظ��û�
 					if (read_tranObject.getCrowd() > 0) {
-						System.out.println("crowd id is "+read_tranObject.getCrowd());
+						System.out.println("crowd id is "
+								+ read_tranObject.getCrowd());
 						ArrayList<String> onlineid = null;
 						onlineid = dao.getFriends(read_tranObject.getCrowd());
 						if (onlineid != null && onlineid.size() > 0) {
@@ -317,6 +323,54 @@ public class InputThread extends Thread {
 			default:
 				break;
 			}
+		}
+	}
+}
+
+class MyInputStream {
+
+	private InputStreamReader isr = null;
+	private ObjectInputStream ois = null;
+	int streamType = -1;
+
+	public MyInputStream(InputStream o, int stream_type) throws IOException {
+		streamType = stream_type;
+		switch (streamType) {
+		case 0:
+			isr = new InputStreamReader(o);
+			break;
+		case 1:
+			ois = new ObjectInputStream(o);
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	public Object readObject() throws IOException, ClassNotFoundException {
+		switch (streamType) {
+		case 0:
+			// isr.println();
+			break;
+		case 1:
+			return ois.readObject();
+		default:
+			break;
+		}
+		return null;
+	}
+
+	public void close() throws IOException {
+		switch (streamType) {
+		case 0:
+			isr.close();
+			break;
+		case 1:
+			ois.close();
+			break;
+		default:
+			break;
 		}
 	}
 }
