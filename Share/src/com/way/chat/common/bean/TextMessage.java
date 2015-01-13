@@ -3,7 +3,7 @@ package com.way.chat.common.bean;
 import java.io.Serializable;
 
 /**
- * 文本消息
+ * 閿熶茎鎲嬫嫹閿熸枻鎷锋伅
  * 
  * @author way
  */
@@ -12,14 +12,43 @@ public class TextMessage implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private String datekey;
+	private String serverdatekey;
 	private String message;
+	private int messageid;
+	private int msgTpye;
+
+	public int getMessageid() {
+		return messageid;
+	}
+
+	public void setMessageid(int messageid) {
+		this.messageid = messageid;
+	}
+
+	public String getServerdatekey() {
+		return serverdatekey;
+	}
+
+	public void setServerdatekey(String serverdatekey) {
+		this.serverdatekey = serverdatekey;
+	}
+
+	public String getDatekey() {
+		return datekey;
+	}
+
+	public void setDatekey(String datekey) {
+		this.datekey = datekey;
+	}
 
 	public TextMessage() {
-
+		msgTpye=0;
 	}
 
 	public TextMessage(String message) {
 		this.message = message;
+		msgTpye=0;
 	}
 
 	public String getMessage() {
@@ -28,5 +57,11 @@ public class TextMessage implements Serializable {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public int getmsgtype(){
+		return msgTpye;
+	}
+	public void setmsgtype(int p){
+		msgTpye=p;
 	}
 }

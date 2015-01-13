@@ -3,6 +3,10 @@ package com.way.chat.common.bean;
 import java.io.Serializable;
 
 public class CommonMsg implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String arg1;
 	private String arg2;
 	private String arg3;

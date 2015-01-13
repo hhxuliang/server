@@ -1,25 +1,29 @@
 package com.way.chat.common.tran.bean;
 
 /**
- * ╢╚йД╤тоСюЮпм
+ * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
  * 
  * @author way
  * 
  */
 public enum TranObjectType {
-	REGISTER, // в╒╡А
-	LOGIN, // сц╩╖╣гб╪
-	LOGOUT, // сц╩╖мкЁЖ╣гб╪
-	FRIENDLOGIN, // ╨цсяиооъ
-	FRIENDLOGOUT, // ╨цсяобоъ
-	MESSAGE, // сц╩╖╥╒кмоШо╒
-	UNCONNECTED, // нч╥╗а╛╫с
-	FILE, // ╢╚йДнд╪Ч
-	REFRESH,//к╒пб╨цсяап╠М
-	ADDFRIENDS,//лМ╪с╨цсяЁи╧╕
-	ALLUSERS,//кЫспсц╩╖пео╒
-	ADDFRIEND,//лМ╪сеСся
-	ISOK, // Ёи╧╕
-	ISERROR, // й╖╟э
-	OFFLINEMESS,//юКоъоШо╒
+	REGISTER, // в╒О©╫О©╫
+	LOGIN, // О©╫ц╩О©╫О©╫О©╫б╪
+	LOGOUT, // О©╫ц╩О©╫О©╫кЁО©╫О©╫О©╫б╪
+	FRIENDLOGIN, // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	FRIENDLOGOUT, // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	MESSAGE, // О©╫ц╩О©╫О©╫О©╫О©╫О©╫О©╫О©╫о╒
+	UNCONNECTED, // О©╫ч╥О©╫О©╫О©╫О©╫О©╫
+	FILE, // О©╫О©╫О©╫О©╫О©╫д╪О©╫
+	REFRESH,//к╒О©╫б╨О©╫О©╫О©╫О©╫п╠О©╫
+	ADDFRIENDS,//О©╫О©╫с╨О©╫О©╫яЁи╧О©╫
+	ALLUSERS,//О©╫О©╫О©╫О©╫О©╫ц╩О©╫О©╫О©╫о╒
+	ADDFRIEND,//О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	ISOK, // О©╫и╧О©╫
+	ISERROR, // й╖О©╫О©╫
+	OFFLINEMESS,//О©╫О©╫О©╫О©╫О©╫О©╫о╒
+	HEARTBEAT,
+	ACKMSG,
+	CROWDOFFLINEMSG,
+	VERSION,
 }

@@ -1,23 +1,28 @@
 package com.way.chat.common.util;
 
-public class Constants
-{
-	public static final String SERVER_IP = "192.168.1.103";// ·þÎñÆ÷IP
-	public static final int SERVER_PORT = 8080;// ·þÎñÆ÷¶Ë¿Ú
+public class Constants {
+	public static final String SERVER_IP = "115.159.71.239";// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IP
+	public static final int SERVER_PORT = 8000;// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
 
-	public static final int CLIENT_SERVER_PORT = 8001;// ¿Í»§¶Ë·þÎñÆ÷¶Ë¿Ú
-	public static final int CLIENT_FILE_TRANSPORT_PORT = 8002;// ¿Í»§¶Ë½ÓÊÕÎÄ¼þ¶Ë¿Ú
+	public static final int CLIENT_SERVER_PORT = 8001;// ï¿½Í»ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
+	public static final int CLIENT_FILE_TRANSPORT_PORT = 8002;// ï¿½Í»ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ë¿ï¿½
 	public static final int REGISTER_FAIL_EMAIL = -1;
 	public static final int REGISTER_FAIL_NAME = -2;
 
-	public static final int REGISTER_FAIL = 0;//×¢²áÊ§°Ü
-	public static final String ACTION = "com.way.message";//ÏûÏ¢¹ã²¥action
-	public static final String MSGKEY = "message";//ÏûÏ¢µÄkey
-	public static final String IP_PORT = "ipPort";//±£´æip¡¢portµÄxmlÎÄ¼þÃû
-	public static final String SAVE_USER = "saveUser";//±£´æÓÃ»§ÐÅÏ¢µÄxmlÎÄ¼þÃû
-	public static final String BACKKEY_ACTION = "com.way.backKey";//·µ»Ø¼ü·¢ËÍ¹ã²¥µÄaction
-	public static final int NOTIFY_ID = 0x911;//Í¨ÖªID
-	public static final String DBNAME = "teather.db";//Êý¾Ý¿âÃû³Æ
+	public static final int REGISTER_FAIL = 0;// ×¢ï¿½ï¿½Ê§ï¿½ï¿½
+	public static final String ACTION = "com.kids.message";// ï¿½ï¿½Ï¢ï¿½ã²¥action
+	public static final String MSGKEY = "message";// ï¿½ï¿½Ï¢ï¿½ï¿½key
+	public static final String PICUPDATE = "pictureupdate";// ï¿½ï¿½Ï¢ï¿½ï¿½key
+	public static final String IP_PORT = "ipPort";// ï¿½ï¿½ï¿½ï¿½ipï¿½ï¿½portï¿½ï¿½xmlï¿½Ä¼ï¿½ï¿½ï¿½
+	public static final String SAVE_USER = "saveUser";// ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½xmlï¿½Ä¼ï¿½ï¿½ï¿½
+	public static final String BACKKEY_ACTION = "com.kids.backKey";// ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½Í¹ã²¥ï¿½ï¿½action
+	public static final int NOTIFY_ID = 0x911;// Í¨ÖªID
+	public static final String DBNAME = "kids.db";// ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	public static final String FILE_UPLOAD_URL = "http://" + SERVER_IP + ":8080/Server/UploadFile";
+	public static final String FILE_UPLOAD_URL = "http://" + SERVER_IP
+			+ ":8080/QQServer/UploadFile";
+	public static final String VERSION = "1.10";
+	public static final String UPGRADE_URL = "http://" + SERVER_IP
+			+ ":8080/QQServer/kids.apk";
+
 }

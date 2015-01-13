@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/com/way/chat/common/bean/TextMessage.java=UTF-8
 encoding//src/com/way/chat/common/tran/bean/TranObject.java=UTF-8
+encoding//src/com/way/chat/common/tran/bean/TranObjectType.java=UTF-8
+encoding/<project>=UTF-8
