@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * ÓÃ»§¶ÔÏó
+ * ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
  * 
  * @author way
  */
@@ -13,37 +13,40 @@ public class User implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id;// QQºÅÂë
+	private int id;// QQï¿½ï¿½ï¿½ï¿½
 	private String loginAccount;
 	private String mobile_NO;
-	private String name;// êÇ³Æ
-	private String email;// ÓÊÏä
-	private String password;// ÃÜÂë
-	private int isOnline;// ÊÇ·ñÔÚÏß
-	private int img;// Í·ÏñÍ¼±ê
-	private String group;// ÄÄÒ»¸ö·Ö×é
+	private String name;// ï¿½Ç³ï¿½
+	private String email;// ï¿½ï¿½ï¿½ï¿½
+	private String password;// ï¿½ï¿½ï¿½ï¿½
+	private int isOnline;// ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+	private int img;// Í·ï¿½ï¿½Í¼ï¿½ï¿½
+	private String group;// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	private String ip;
 	private int port;
 	private int iscrowd;
-	private ArrayList<String>  OffLineMessUser;
-	public User(){}
-	public User(int tid,String tname)
-	{
-		id=tid;
-		name = tname;
-		group="ÎÒµÄºÃÓÑ";
-		img=0;
-		isOnline=1;
-		
+	private ArrayList<String> OffLineMessUser;
+
+	public User() {
 	}
+
+	public User(int tid, String tname) {
+		id = tid;
+		name = tname;
+		group = "ï¿½ÒµÄºï¿½ï¿½ï¿½";
+		img = 0;
+		isOnline = 1;
+
+	}
+
 	public ArrayList<String> getOffLineMessUser() {
 		return OffLineMessUser;
 	}
 
-
 	public void setOffLineMessUser(ArrayList<String> id) {
-		this.OffLineMessUser=id;
+		this.OffLineMessUser = id;
 	}
+
 	public int getId() {
 		return id;
 	}
@@ -51,6 +54,7 @@ public class User implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public int getIsCrowd() {
 		return iscrowd;
 	}
@@ -58,6 +62,7 @@ public class User implements Serializable {
 	public void setIsCrowd(int id) {
 		this.iscrowd = id;
 	}
+
 	public String getName() {
 		return name;
 	}
@@ -65,6 +70,7 @@ public class User implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getLoginAccount() {
 		return loginAccount;
 	}
@@ -72,6 +78,7 @@ public class User implements Serializable {
 	public void setLoginAccount(String s) {
 		this.loginAccount = s;
 	}
+
 	public String getIp() {
 		return ip;
 	}
@@ -143,10 +150,19 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email
-				+ ", password=" + password + ", isOnline=" + isOnline
-				+ ", img=" + img + ", group=" + group + ", ip=" + ip
-				+ ", port=" + port + ", iscrowd=" + iscrowd + "]";
+		String js = null;
+		js = "{\"apiKey\":\"\",\"city\":\"\",\"latitude\":0,\"longitude\":0,\"province\":\"\",\"registerDate\":0,"
+				+ "\"userAge\":0,\"userBirthday\":\"\",\"userDescription\":\"\",\"userHead\":\""
+				+ img
+				+ "\",\"userId\":\""
+				+ id
+				+ "\","
+				+ "\"userName\":\""
+				+ name
+				+ "\",\"userNickname\":\""
+				+ name
+				+ "\",\"userPassword\":\"\",\"userPhone\":\"\",\"userQq\":\"\",\"userSex\":0,\"userState\":1}";
+		return js;
 	}
 
 }

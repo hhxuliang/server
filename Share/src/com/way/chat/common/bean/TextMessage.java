@@ -43,12 +43,12 @@ public class TextMessage implements Serializable {
 	}
 
 	public TextMessage() {
-		msgTpye=0;
+		msgTpye = 0;
 	}
 
 	public TextMessage(String message) {
 		this.message = message;
-		msgTpye=0;
+		msgTpye = 0;
 	}
 
 	public String getMessage() {
@@ -58,10 +58,21 @@ public class TextMessage implements Serializable {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public int getmsgtype(){
+
+	public int getmsgtype() {
 		return msgTpye;
 	}
-	public void setmsgtype(int p){
-		msgTpye=p;
+
+	public void setmsgtype(int p) {
+		msgTpye = p;
+	}
+
+	@Override
+	public String toString() {
+		String js = null;
+		js = "{\"type\":1,\"timeSend\":\"2015-01-15 23:50:00\",\"location_x\":0,\"content\":\""
+				+ message
+				+ "\",\"fileSize\":0,\"toUserId\":\"2077\",\"location_y\":0,\"fromUserId\":\"2078\",\"timeLen\":0}";
+		return js;
 	}
 }

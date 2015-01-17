@@ -23,7 +23,6 @@ public class TranObject<T> implements Serializable {
 	private int fromimg;
 
 	private T object;// 锟斤拷锟斤拷亩锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟角匡拷锟斤拷锟皆讹拷锟斤拷锟轿猴拷
-	private List<Integer> group;// 群锟斤拷锟斤拷锟斤拷些锟矫伙拷
 
 	public TranObject(TranObjectType type) {
 		this.type = type;
@@ -36,6 +35,7 @@ public class TranObject<T> implements Serializable {
 	public void setFromUserName(String fromUser) {
 		this.fromusername = fromUser;
 	}
+
 	public int getFromImg() {
 		return fromimg;
 	}
@@ -43,7 +43,7 @@ public class TranObject<T> implements Serializable {
 	public void setFromImg(int from) {
 		this.fromimg = from;
 	}
-	
+
 	public int getFromUser() {
 		return fromUser;
 	}
@@ -51,6 +51,7 @@ public class TranObject<T> implements Serializable {
 	public void setFromUser(int fromUser) {
 		this.fromUser = fromUser;
 	}
+
 	public int getCrowd() {
 		return crowd;
 	}
@@ -58,6 +59,7 @@ public class TranObject<T> implements Serializable {
 	public void setCrowd(int id) {
 		this.crowd = id;
 	}
+
 	public int getToUser() {
 		return toUser;
 	}
@@ -77,8 +79,26 @@ public class TranObject<T> implements Serializable {
 	public TranObjectType getType() {
 		return type;
 	}
-	@Override
+
 	public String toString() {
-		return "";
+		String ostr = "";
+		if (object instanceof java.util.List) {
+			ostr = "[";
+			List<Object> lo = (List<Object>) object;
+			for (Object o : lo) {
+				if (ostr.length() > 1)
+					ostr = ostr + ",";
+				ostr = ostr + o.toString();
+			}
+			ostr = ostr + "]";
+		} else
+			ostr = object.toString();
+
+		String js = "{\"TranObjectType\":" + type.ordinal() + "," + "\"fromUser\":"
+				+ fromUser + "," + "\"toUser\":" + toUser + "," + "\"crowd\":"
+				+ crowd + "," + "\"fromusername\":\"" + fromusername + "\","
+				+ "\"fromimg\":" + fromimg + "," + "\"TranObject\":" + ostr
+				+ "}";
+		return js;
 	}
 }
