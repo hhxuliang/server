@@ -1,5 +1,6 @@
 package com.way.chat.server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,6 +12,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import com.way.chat.common.bean.AddNewFriendMsg;
 import com.way.chat.common.bean.CommonMsg;
@@ -45,7 +48,7 @@ public class InputThread extends Thread {
 		this.map = map;
 		keystr = strs;
 		try {
-			ois = new MyInputStream(socket.getInputStream(), 1);// ʵ��������������
+			ois = new MyInputStream(socket.getInputStream(), 0);// ʵ��������������
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -351,8 +354,40 @@ class MyInputStream {
 	public Object readObject() throws IOException, ClassNotFoundException {
 		switch (streamType) {
 		case 0:
-			// isr.println();
-			break;
+			BufferedReader br = new BufferedReader(isr);
+			String read = new String();
+			TranObject obj = null;
+			read = br.readLine();
+			if (read != null && read.length() > 0) {
+				System.out.println(read);
+				JSONObject jsonObj = JSONObject.fromObject(read);
+				int name = jsonObj.getInt("TranObjectType");
+				switch (name) {
+				case 0:
+					break;
+				case 1:
+					obj = new TranObject<User>(TranObjectType.LOGIN);
+					obj.setToUser(jsonObj.getInt("toUser"));
+					JSONObject jsonObj_u = jsonObj.getJSONObject("TranObject");
+					User u = new User();
+					u.setName(jsonObj_u.getString("name"));
+					u.setLoginAccount(jsonObj_u.getString("name"));
+					u.setPassword(jsonObj_u.getString("password"));
+					obj.setObject(u);
+					break;
+				case 5:
+					obj = new TranObject<User>(TranObjectType.MESSAGE);
+					obj.setToUser(jsonObj.getInt("toUser"));
+					JSONObject jsonObj_msg = jsonObj.getJSONObject("TranObject");
+					TextMessage msg = new TextMessage();
+					msg.setMessage(jsonObj_msg.getString("content"));
+					msg.setmsgtype(jsonObj_msg.getInt("type"));
+					msg.setDatekey(jsonObj_msg.getString("timeSend"));
+					obj.setObject(msg);
+					break;
+				}
+			}
+			return obj;
 		case 1:
 			return ois.readObject();
 		default:

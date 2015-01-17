@@ -42,7 +42,7 @@ public class OutputThread extends Thread {
 			keystr = keys;
 			this.socket = socket;
 			this.map = map;
-			oos = new MyOutputStream(socket.getOutputStream(),1);// �ڹ���������ʵ�������������
+			oos = new MyOutputStream(socket.getOutputStream(), 0);// �ڹ���������ʵ�������������
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +115,9 @@ class MyOutputStream {
 	public void writeObject(TranObject o) throws IOException {
 		switch (streamType) {
 		case 0:
-			//pw.println(o.toString());
+			String sendmsg = o.toString() +"$(KIDSOVER)";
+			System.out.println(sendmsg);
+			pw.print(sendmsg);
 			break;
 		case 1:
 			oos.writeObject(o);
@@ -142,7 +144,7 @@ class MyOutputStream {
 	public void reset() throws IOException {
 		switch (streamType) {
 		case 0:
-			//pw.reset();
+			// pw.reset();
 			break;
 		case 1:
 			oos.reset();
