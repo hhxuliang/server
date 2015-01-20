@@ -1,8 +1,9 @@
 package com.way.chat.common.util;
 
 public class Constants {
-	public static final String SERVER_IP = "115.159.71.239";// ������IP
+	public static final String SERVER_IP = "10.65.150.29";// ������IP
 	public static final int SERVER_PORT = 8000;// �������˿�
+	public static final int SERVER_PORT_IOS = 8001;// �������˿�
 
 	public static final int CLIENT_SERVER_PORT = 8001;// �ͻ��˷������˿�
 	public static final int CLIENT_FILE_TRANSPORT_PORT = 8002;// �ͻ��˽����ļ��˿�

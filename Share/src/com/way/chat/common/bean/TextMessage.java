@@ -70,9 +70,17 @@ public class TextMessage implements Serializable {
 	@Override
 	public String toString() {
 		String js = null;
-		js = "{\"type\":1,\"timeSend\":\"2015-01-15 23:50:00\",\"location_x\":0,\"content\":\""
+		String timesend="";
+		if(datekey.length()>0)
+		{
+			timesend=datekey.substring(0, datekey.lastIndexOf(":"));
+		}
+		js = "{\"type\":"
+				+ msgTpye
+				+ ",\"timeSend\":\""+timesend+"\",\"location_x\":0,\"content\":\""
 				+ message
-				+ "\",\"fileSize\":0,\"toUserId\":\"2077\",\"location_y\":0,\"fromUserId\":\"2078\",\"timeLen\":0}";
+				+ "\",\"fileSize\":0,\"toUserId\":\"2077\",\"location_y\":0,\"fromUserId\":\"2078\",\"timeLen\":0,\"serverdatekey\":\""
+				+ datekey + "\"}";
 		return js;
 	}
 }

@@ -24,13 +24,13 @@ public class Server extends Thread
 	private Socket socket = null;
 	private boolean isStarted = true;
 
-	public Server()
+	public Server(int port)
 	{
 		try
 		{
 			// �����̳߳أ����о���(cpu����*50)���߳�
 			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 50);
-			serverSocket = new ServerSocket(Constants.SERVER_PORT);
+			serverSocket = new ServerSocket(port);
 		}
 		catch (IOException e)
 		{
@@ -48,7 +48,7 @@ public class Server extends Thread
 			{
 				socket = serverSocket.accept();
 				String ip = socket.getInetAddress().toString();
-				System.out.println(MyDate.getDateCN() + " �û���" + ip + " �ѽ�������");
+				System.out.println(MyDate.getDateCN() + "connect by" + ip );
 				// Ϊ֧�ֶ��û��������ʣ������̳߳ع���ÿһ���û�����������
 				if (socket.isConnected())
 					executorService.execute(new SocketTask(socket));// ��ӵ��̳߳�
@@ -115,6 +115,7 @@ public class Server extends Thread
 
 	public static void main(String[] args)
 	{
-		new Server().start();
+		new Server(Constants.SERVER_PORT).start();
+		new Server(Constants.SERVER_PORT_IOS).start();
 	}
 }

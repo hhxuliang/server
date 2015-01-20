@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.way.chat.common.tran.bean.TranObject;
+import com.way.chat.common.util.Constants;
 
 /**
  * д��Ϣ�߳�
@@ -42,7 +43,12 @@ public class OutputThread extends Thread {
 			keystr = keys;
 			this.socket = socket;
 			this.map = map;
-			oos = new MyOutputStream(socket.getOutputStream(), 0);// �ڹ���������ʵ�������������
+			if(socket.getLocalPort()==Constants.SERVER_PORT_IOS)
+				oos = new MyOutputStream(socket.getOutputStream(), 0);// �ڹ���������ʵ�������������
+			else if(socket.getLocalPort()==Constants.SERVER_PORT)
+				oos = new MyOutputStream(socket.getOutputStream(), 1);// �ڹ���������ʵ�������������
+				
+				
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

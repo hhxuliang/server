@@ -21,7 +21,7 @@
     p:password="${jdbc.password}" /-->
 
     <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
-    <bean class="com.way.chat.server.Server" init-method="start">
+    <bean class="com.way.chat.server.ServerWebSer" init-method="start">
     </bean>
 
 </beans>

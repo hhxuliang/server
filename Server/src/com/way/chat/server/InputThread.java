@@ -48,7 +48,11 @@ public class InputThread extends Thread {
 		this.map = map;
 		keystr = strs;
 		try {
-			ois = new MyInputStream(socket.getInputStream(), 0);// ʵ��������������
+			if(socket.getLocalPort()==Constants.SERVER_PORT_IOS)
+				ois = new MyInputStream(socket.getInputStream(), 0);// ʵ��������������
+			else if(socket.getLocalPort()==Constants.SERVER_PORT)
+				ois = new MyInputStream(socket.getInputStream(), 1);// ʵ��������������
+				
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -333,6 +337,7 @@ public class InputThread extends Thread {
 class MyInputStream {
 
 	private InputStreamReader isr = null;
+	BufferedReader br = null;
 	private ObjectInputStream ois = null;
 	int streamType = -1;
 
@@ -340,7 +345,8 @@ class MyInputStream {
 		streamType = stream_type;
 		switch (streamType) {
 		case 0:
-			isr = new InputStreamReader(o);
+			isr = new InputStreamReader(o,"UTF-8");
+			br = new BufferedReader(isr);
 			break;
 		case 1:
 			ois = new ObjectInputStream(o);
@@ -354,10 +360,10 @@ class MyInputStream {
 	public Object readObject() throws IOException, ClassNotFoundException {
 		switch (streamType) {
 		case 0:
-			BufferedReader br = new BufferedReader(isr);
+			
 			String read = new String();
 			TranObject obj = null;
-			read = br.readLine();
+ 			read = br.readLine();
 			if (read != null && read.length() > 0) {
 				System.out.println(read);
 				JSONObject jsonObj = JSONObject.fromObject(read);
@@ -378,12 +384,24 @@ class MyInputStream {
 				case 5:
 					obj = new TranObject<User>(TranObjectType.MESSAGE);
 					obj.setToUser(jsonObj.getInt("toUser"));
+					obj.setFromUser(jsonObj.getInt("fromUser"));
 					JSONObject jsonObj_msg = jsonObj.getJSONObject("TranObject");
 					TextMessage msg = new TextMessage();
 					msg.setMessage(jsonObj_msg.getString("content"));
 					msg.setmsgtype(jsonObj_msg.getInt("type"));
 					msg.setDatekey(jsonObj_msg.getString("timeSend"));
 					obj.setObject(msg);
+					break;
+				case 16:
+					obj = new TranObject<User>(TranObjectType.ACKMSG);
+					obj.setToUser(jsonObj.getInt("toUser"));
+					obj.setFromUser(jsonObj.getInt("fromUser"));
+					JSONObject jsonObj_ack = jsonObj.getJSONObject("TranObject");
+					CommonMsg cmsg = new CommonMsg();
+					cmsg.setarg1(jsonObj_ack.getString("arg1"));
+					cmsg.setarg2(jsonObj_ack.getString("arg2"));
+					cmsg.setarg3(jsonObj_ack.getString("arg3"));
+					obj.setObject(cmsg);
 					break;
 				}
 			}

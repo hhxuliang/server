@@ -28,12 +28,19 @@ public class AddNewFriendMsg implements Serializable {
 	public void setUserID(String id) {
 		this.userID = id;
 	}
-	
+
 	public void addNewFriendID(String id) {
 		this.newFriends.add(id);
 	}
-	
-	public List<String> getFriends(){
+
+	public List<String> getFriends() {
 		return newFriends;
+	}
+
+	@Override
+	public String toString() {
+		String js = null;
+		js = "{\"AddNewFriendMsg\":\"not_support\"}";
+		return js;
 	}
 }
