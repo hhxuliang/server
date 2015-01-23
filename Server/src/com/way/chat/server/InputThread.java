@@ -389,7 +389,7 @@ class MyInputStream {
 					TextMessage msg = new TextMessage();
 					msg.setMessage(jsonObj_msg.getString("content"));
 					msg.setmsgtype(jsonObj_msg.getInt("type"));
-					msg.setDatekey(jsonObj_msg.getString("timeSend"));
+					msg.setDatekey(jsonObj_msg.getString("datekey"));
 					obj.setObject(msg);
 					break;
 				case 16:

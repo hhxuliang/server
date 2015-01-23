@@ -1,8 +1,10 @@
 package com.way.chat.server;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -99,7 +101,7 @@ public class OutputThread extends Thread {
 
 class MyOutputStream {
 
-	private PrintWriter pw = null;
+	private BufferedWriter pw = null;
 	private ObjectOutputStream oos = null;
 	int streamType = -1;
 
@@ -107,7 +109,7 @@ class MyOutputStream {
 		streamType = stream_type;
 		switch (streamType) {
 		case 0:
-			pw = new PrintWriter(o);
+			pw =  new BufferedWriter(new OutputStreamWriter(o, "UTF8"));
 			break;
 		case 1:
 			oos = new ObjectOutputStream(o);
@@ -123,7 +125,7 @@ class MyOutputStream {
 		case 0:
 			String sendmsg = o.toString() +"$(KIDSOVER)";
 			System.out.println(sendmsg);
-			pw.print(sendmsg);
+			pw.write(sendmsg);
 			break;
 		case 1:
 			oos.writeObject(o);
