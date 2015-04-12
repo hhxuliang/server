@@ -22,7 +22,7 @@ public class Constants {
 
 	public static final String FILE_UPLOAD_URL = "http://" + SERVER_IP
 			+ ":8080/Server/UploadFile";
-	public static final String VERSION = "1.10";
+	public static final String VERSION = "1.20";
 	public static final String UPGRADE_URL = "http://" + SERVER_IP
 			+ ":8080/Server/kids.apk";
 

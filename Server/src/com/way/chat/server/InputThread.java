@@ -323,9 +323,9 @@ public class InputThread extends Thread {
 				System.out.println("get crowd off line msg");
 				if (cmm.getarg1() != null && cmm.getarg1().length() > 0) {
 					where = cmm.getarg1();
-
+					getCrowdOffLineMessage(dao, idforu, crowdid, where);
 				}
-				getCrowdOffLineMessage(dao, idforu, crowdid, where);
+				
 				break;
 			default:
 				break;

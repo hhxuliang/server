@@ -93,7 +93,9 @@ public class TranObject<T> implements Serializable {
 			ostr = ostr + "]";
 		} else
 			ostr = object.toString();
-
+		ostr=ostr.replaceAll("TOUID", toUser+"");
+		ostr=ostr.replaceAll("FROMUID", fromUser+"");
+		
 		String js = "{\"TranObjectType\":" + type.ordinal() + "," + "\"fromUser\":"
 				+ fromUser + "," + "\"toUser\":" + toUser + "," + "\"crowd\":"
 				+ crowd + "," + "\"fromusername\":\"" + fromusername + "\","

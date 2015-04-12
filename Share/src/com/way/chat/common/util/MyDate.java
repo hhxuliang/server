@@ -32,7 +32,7 @@ public class MyDate {
 
 	public static String getDateMillis() {
 		SimpleDateFormat format = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss:SSS");
+				"yyyy-MM-dd_HH:mm:ss:SSS");
 		String date = format.format(new Date(System.currentTimeMillis()));
 		return date;
 	}

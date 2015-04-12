@@ -79,7 +79,7 @@ public class TextMessage implements Serializable {
 				+ msgTpye
 				+ ",\"timeSend\":\""+timesend+"\",\"location_x\":0,\"content\":\""
 				+ message
-				+ "\",\"fileSize\":0,\"toUserId\":\"2077\",\"location_y\":0,\"fromUserId\":\"2078\",\"timeLen\":0,\"serverdatekey\":\""
+				+ "\",\"fileSize\":0,\"toUserId\":\"TOUID\",\"location_y\":0,\"fromUserId\":\"FROMUID\",\"timeLen\":0,\"serverdatekey\":\""
 				+ datekey + "\"}";
 		return js;
 	}
